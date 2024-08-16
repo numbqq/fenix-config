@@ -68,11 +68,11 @@ while true; do
 	LIST+=( "SSH" "Reconfigure SSH daemon" )
 	LIST+=( "Firmware" "Update all packages and firmware" )
 
-	if [[ "$SHELL" != *bash ]]; then
-		LIST+=( "BASH" "Revert to stock BASH shell" )
-	else
-		LIST+=( "ZSH" "Install ZSH with plugins and tmux" )
-	fi
+	# if [[ "$SHELL" != *bash ]]; then
+	# 	LIST+=( "BASH" "Revert to stock BASH shell" )
+	# else
+	# 	LIST+=( "ZSH" "Install ZSH with plugins and tmux" )
+	# fi
 
 	# desktop
 	if [[ -n $DISPLAY_MANAGER ]]; then

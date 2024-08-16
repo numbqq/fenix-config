@@ -924,11 +924,11 @@ function jobs ()
 			if [[ $? -eq 0 ]]; then
 
 				# unfreeze packages
-				apt-mark showhold | egrep "linux|armbian" | xargs sudo apt-mark unhold
+				apt-mark showhold | egrep "linux|fenix" | xargs sudo apt-mark unhold
 
 				debconf-apt-progress -- apt --fix-broken -y install
 				debconf-apt-progress -- apt-get -o Acquire::CompressionTypes::Order::=gz -o Acquire::http::No-Cache=true -o Acquire::BrokenProxy=true -o Acquire::http::Pipeline-Depth=0 update
-				debconf-apt-progress -- apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y upgrade
+				debconf-apt-progress -- apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y dist-upgrade
 				[[ -z $scripted ]] && \
 				dialog --title " Firmware update " --colors --no-label "No" --backtitle "$BACKTITLE" --yesno \
 				"\nFirmware has been updated. Reboot?   " 7 39
@@ -1199,7 +1199,6 @@ function jobs ()
 		# check if user agree to enter this area
 		CHANGES="false"
 		while true; do
-			overlay_prefix=$(cat /boot/armbianEnv.txt | grep overlay_prefix | sed 's/overlay_prefix=//g')
 			TARGET_BRANCH=$BRANCH
 			exceptions "$BRANCH"
 			MOTD=()
@@ -1209,15 +1208,11 @@ function jobs ()
 			DIALOG_CANCEL=1
 			DIALOG_ESC=255
 
-			def_overlays=$(ls -1 ${OVERLAYDIR}/${overlay_prefix}*.dtbo | sed 's/^.*\('${overlay_prefix}'.*\)/\1/g' | sed 's/'${overlay_prefix}'-//g' | sed 's/.dtbo//g')
-			if [ $BOARDFAMILY == "rockchip-rk3588" ] && [ $BRANCH == "legacy" ]; then
-        		builtin_overlays=$(ls -1 ${OVERLAYDIR}/*.dtbo | grep -v ${overlay_prefix} | sed 's#^'${OVERLAYDIR}'/##' | sed 's/.dtbo//g')
-        		def_overlays="$def_overlays"'\n'"$builtin_overlays"
-			fi
+			def_overlays=$(ls -1 ${OVERLAYDIR}/*.dtbo | sed "s#^${OVERLAYDIR}/##" | sed 's/.dtbo//g')
 
 			while read line
 			do
-				STATUS=$([[ -n $(cat /boot/armbianEnv.txt | grep overlays | grep -w ${line}) ]] && echo "on")
+				STATUS=$([[ -n $(cat ${OVERLAYCONF} | grep fdt_overlays | grep -w ${line}) ]] && echo "on")
 				DESC=$(description "$line")
 				MOTD+=( "$line" "$DESC" "$STATUS")
 				LINES[ $j ]=$line
@@ -1238,9 +1233,8 @@ function jobs ()
 				0)
 					CHANGES="true"
 					newoverlays="$(echo "$selection" | sed "s|[^ ]* *|&|g")"
-					sed -i "s/^overlays=.*/overlays=$newoverlays/" /boot/armbianEnv.txt
-					if ! grep -q "^overlays" /boot/armbianEnv.txt; then echo "overlays=$newoverlays" >> /boot/armbianEnv.txt; fi
-					if [[ -z $newoverlays ]]; then sed -i "/^overlays/d" /boot/armbianEnv.txt; fi
+					sed -i "s/^fdt_overlays=.*/fdt_overlays=$newoverlays/" ${OVERLAYCONF}
+					if ! grep -q "^fdt_overlays" ${OVERLAYCONF}; then echo "fdt_overlays=$newoverlays" >> ${OVERLAYCONF}; fi
 					sync
 				;;
 				1)
@@ -1252,8 +1246,8 @@ function jobs ()
 						break
 					fi
 				;;
-				esac
-			done
+			esac
+		done
 
 	;;
 
