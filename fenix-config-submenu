@@ -40,9 +40,9 @@ while true; do
 	# armbian specific function
 	if [[ -f /etc/fenix-release ]]; then
 		if [[ -n "${mark}" ]]; then
-			LIST+=( "Defreeze" "Enable kernel upgrades " )
+			LIST+=( "Defreeze" "Enable kernel & board support packages upgrades " )
 		else
-			LIST+=( "Freeze" "Disable kernel upgrades " )
+			LIST+=( "Freeze" "Disable kernel & board support packages upgrades " )
 		fi
 	fi
 

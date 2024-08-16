@@ -941,7 +941,7 @@ function jobs ()
 	# Install to SATA, eMMC, NAND or USB
 	#
 	"Install" )
-		nand-sata-install
+		emmc-install
 	;;
 
 
@@ -950,27 +950,29 @@ function jobs ()
 	"Freeze" | "Defreeze" )
 	if ! is_package_manager_running; then
 		if [[ -z $scripted ]]; then dialog --title " Updating " --backtitle "$BACKTITLE" --yes-label "$1" --no-label "Cancel" --yesno \
-		"\nDo you want to ${1,,} Armbian firmware updates?" 7 54
+		"\nDo you want to ${1,,} Fenix kernel & board support packages updates?" 7 54
 		fi
 		if [[ $? -eq 0 ]]; then
 
 			unset PACKAGE_LIST
+			local kernel_version=$(uname -r | cut -f 1-2 -d.)
 
 			# basic packages
 
-			check_if_installed linux-u-boot-${BOARD}-${BRANCH} && PACKAGE_LIST+=" linux-u-boot-${BOARD}-${BRANCH}"
-			check_if_installed linux-image-${BRANCH}-${LINUXFAMILY} && PACKAGE_LIST+=" linux-image-${BRANCH}-${LINUXFAMILY}"
-			check_if_installed linux-dtb-${BRANCH}-${LINUXFAMILY} && PACKAGE_LIST+=" linux-dtb-${BRANCH}-${LINUXFAMILY}"
-			check_if_installed linux-headers-${BRANCH}-${LINUXFAMILY} && PACKAGE_LIST+=" linux-headers-${BRANCH}-${LINUXFAMILY}"
+			check_if_installed linux-u-boot-${BOARD@L}-vendor && PACKAGE_LIST+=" linux-u-boot-${BOARD@L}-vendor"
+			check_if_installed linux-u-boot-${BOARD@L}-mainline && PACKAGE_LIST+=" linux-u-boot-${BOARD@L}-mainline"
+			check_if_installed linux-image-${VENDOR@L}-${kernel_version} && PACKAGE_LIST+=" linux-image-${VENDOR@L}-${kernel_version}"
+			check_if_installed linux-dtb-${VENDOR@L}-${kernel_version} && PACKAGE_LIST+=" linux-dtb-${VENDOR@L}-${kernel_version}"
+			check_if_installed linux-headers-${VENDOR@L}-${kernel_version} && PACKAGE_LIST+=" linux-headers-${VENDOR@L}-${kernel_version}"
 
 			# new BSP
-			check_if_installed armbian-${LINUXFAMILY} && PACKAGE_LIST+=" armbian-${LINUXFAMILY}"
-			check_if_installed armbian-${BOARD} && PACKAGE_LIST+=" armbian-${BOARD}"
-			check_if_installed armbian-${DISTROID} && PACKAGE_LIST+=" armbian-${DISTROID}"
-			check_if_installed armbian-bsp-cli-${BOARD} && PACKAGE_LIST+=" armbian-bsp-cli-${BOARD}"
-			check_if_installed armbian-${DISTROID}-desktop-xfce && PACKAGE_LIST+=" armbian-${DISTROID}-desktop-xfce"
-			check_if_installed armbian-firmware && PACKAGE_LIST+=" armbian-firmware"
-			check_if_installed armbian-firmware-full && PACKAGE_LIST+=" armbian-firmware-full"
+			check_if_installed linux-board-package-${DISTROID}-${BOARD@L} && PACKAGE_LIST+=" linux-board-package-${DISTROID}-${BOARD@L}"
+			check_if_installed fenix-${DISTRO@L}-${DISTROID}-gnome-desktop && PACKAGE_LIST+=" fenix-${DISTRO@L}-${DISTROID}-gnome-desktop"
+			check_if_installed fenix-${DISTRO@L}-${DISTROID}-lxde-desktop && PACKAGE_LIST+=" fenix-${DISTRO@L}-${DISTROID}-lxde-desktop"
+			check_if_installed fenix-${DISTRO@L}-${DISTROID}-xfce-desktop && PACKAGE_LIST+=" fenix-${DISTRO@L}-${DISTROID}-xfce-desktop"
+			check_if_installed linux-gpu-mali-wayland && PACKAGE_LIST+=" linux-gpu-mali-wayland"
+			check_if_installed linux-gpu-mali-gbm && PACKAGE_LIST+=" linux-gpu-mali-gbm"
+			check_if_installed linux-gpu-mali-fbdev && PACKAGE_LIST+=" linux-gpu-mali-fbdev"
 
 			local words=( $PACKAGE_LIST )
 			local command="unhold"
