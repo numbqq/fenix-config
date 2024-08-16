@@ -1177,8 +1177,8 @@ function jobs ()
 	#
 	"Bootenv" )
 		dialog --title " Edit u-boot environment " --ok-label "Save" \
-		--no-collapse --editbox /boot/armbianEnv.txt 30 0 2> /boot/armbianEnv.txt.out
-		[[ $? = 0 ]] && mv /boot/armbianEnv.txt.out /boot/armbianEnv.txt
+		--no-collapse --editbox /boot/uEnv.txt 30 0 2> /boot/uEnv.txt.out
+		[[ $? = 0 ]] && mv /boot/uEnv.txt.out /boot/uEnv.txt
 		sync
 	;;
 
