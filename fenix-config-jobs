@@ -1003,10 +1003,8 @@ function jobs ()
 			if [[ $exitstatus = 0 ]]; then
 				function stop_display()
 				{
-					bash -c "service lightdm stop >/dev/null 2>&1
-					systemctl disable lightdm.service >/dev/null 2>&1
-					service nodm stop >/dev/null 2>&1
-					systemctl disable nodm.service >/dev/null 2>&1"
+					bash -c "service $DISPLAY_MANAGER stop >/dev/null 2>&1
+					systemctl disable $DISPLAY_MANAGER.service >/dev/null 2>&1"
 				}
 				if xhost >& /dev/null ; then
 					stop_display &
@@ -1018,25 +1016,48 @@ function jobs ()
 			if ! is_package_manager_running; then
 				# remove nodm and install lightdm = backward compatibility
 				[[ -n $(dpkg -l | grep nodm) ]] && debconf-apt-progress -- apt-get -y purge nodm
-				[[ -z $(dpkg -l | grep lightdm) ]] && debconf-apt-progress -- apt-get -o Dpkg::Options::="--force-confold" -y --no-install-recommends install lightdm-gtk-greeter lightdm
+				[[ -z $(dpkg -l | grep gdm3) ]] && [[ -z $(dpkg -l | grep lightdm) ]] && debconf-apt-progress -- apt-get -o Dpkg::Options::="--force-confold" -y --no-install-recommends install lightdm-gtk-greeter lightdm
 				if [[ -n $DESKTOP_INSTALLED ]]; then
 					dialog --title " Display manager " --backtitle "$BACKTITLE" --yesno "\nDo you want to enable autologin?" 7 36
 					exitstatus=$?;
 					if [[ $exitstatus = 0 ]]; then
 						add_choose_user
 						if [ -n "$CHOSEN_USER" ]; then
-							mkdir -p /etc/lightdm/lightdm.conf.d
-							echo "[Seat:*]" > /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf
-							echo "autologin-user=$CHOSEN_USER" >> /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf
-							echo "autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf
-							echo "user-session=xfce" >> /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf
+							if [[ $DESKTOP_INSTALLED == gnome ]]; then
+								if [[ ! -f /etc/gdm3/custom.conf ]]; then
+									cat <<- EOF > /etc/gdm3/custom.conf
+										[daemon]
+										AutomaticLoginEnable = true
+										AutomaticLogin = $CHOSEN_USER
+									EOF
+								else
+									sed -i '/AutomaticLogin/s/^#\s*//g' /etc/gdm3/custom.conf
+									sed -i "s/AutomaticLogin =.*/AutomaticLogin = $CHOSEN_USER/g" /etc/gdm3/custom.conf
+								fi
+								ln -s /lib/systemd/system/gdm.service /etc/systemd/system/display-manager.service >/dev/null 2>&1
+								service gdm start >/dev/null 2>&1
+							else
+								mkdir -p /etc/lightdm/lightdm.conf.d
+								echo "[Seat:*]" > /etc/lightdm/lightdm.conf.d/22-autologin.conf
+								echo "autologin-user=$CHOSEN_USER" >> /etc/lightdm/lightdm.conf.d/22-autologin.conf
+								echo "autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf.d/22-autologin.conf
+								echo "user-session=xfce" >> /etc/lightdm/lightdm.conf.d/22-autologin.conf
+								ln -s /lib/systemd/system/lightdm.service /etc/systemd/system/display-manager.service >/dev/null 2>&1
+								service lightdm start >/dev/null 2>&1
+							fi
+						fi
+					else
+						if [[ $DESKTOP_INSTALLED == gnome ]]; then
+							if [[ -f /etc/gdm3/custom.conf ]]; then
+								grep -v '^#' /etc/gdm3/custom.conf | grep -q AutomaticLogin && sed -i '/AutomaticLogin/s/^/# /g' /etc/gdm3/custom.conf
+							fi
+							ln -s /lib/systemd/system/gdm.service /etc/systemd/system/display-manager.service >/dev/null 2>&1
+							service gdm start >/dev/null 2>&1
+						else
+							rm /etc/lightdm/lightdm.conf.d/22-autologin.conf >/dev/null 2>&1
 							ln -s /lib/systemd/system/lightdm.service /etc/systemd/system/display-manager.service >/dev/null 2>&1
 							service lightdm start >/dev/null 2>&1
 						fi
-					else
-						rm /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf >/dev/null 2>&1
-						ln -s /lib/systemd/system/lightdm.service /etc/systemd/system/display-manager.service >/dev/null 2>&1
-						service lightdm start >/dev/null 2>&1
 					fi
 					# kill this bash script after desktop is up and if executed on console
 					[[ $(tty | sed -e "s:/dev/::") == tty* ]] && kill -9 $$
@@ -1048,10 +1069,10 @@ function jobs ()
 	"Default" )
 
 		RELEASE=$(source /etc/os-release; echo $VERSION_CODENAME)
-		LIST=($(apt list 2>/dev/null | grep armbian | grep desktop | grep -v bsp | grep "\-"$RELEASE | sed "s/\/$RELEASE,$RELEASE//g" | cut -d" " -f1-2))
+		LIST=($(apt list 2>/dev/null | grep fenix | grep desktop | grep -v bsp | grep "\-"$RELEASE | sed "s/\/$RELEASE,$RELEASE//g" | cut -d" " -f1-2))
 		LIST_LENGTH=$((${#LIST[@]}/2));
 		exec 3>&1
-			TARGET_DESKTOP=$(dialog --cancel-label "Cancel" --backtitle "$BACKTITLE" --no-collapse --title "Select Armbian optimised desktop" --clear --menu "" $((6+${LIST_LENGTH})) 52 25 "${LIST[@]}" 2>&1 1>&3)
+			TARGET_DESKTOP=$(dialog --cancel-label "Cancel" --backtitle "$BACKTITLE" --no-collapse --title "Select Fenix optimised desktop" --clear --menu "" $((6+${LIST_LENGTH})) 52 25 "${LIST[@]}" 2>&1 1>&3)
 			exitstatus=$?;
 		exec 3>&-
 
