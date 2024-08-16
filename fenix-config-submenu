@@ -30,33 +30,25 @@ while true; do
 	check_desktop
 
 	# check update status of BSP packages
-	local mark=$(apt-mark showhold | egrep "linux|armbian-bsp|armbian-firmware|armbian-*-desktop")
+	local mark=$(apt-mark showhold | egrep "linux|fenix-*-desktop")
 
 	# check if installer is on the system
-	if [[ -f /usr/sbin/armbian-install ]]; then
+	if [[ -f /usr/sbin/emmc-install ]]; then
 		LIST+=( "Install" "Install to/update boot loader" )
 	fi
 
 	# armbian specific function
-	if [[ -f /etc/armbian-release ]]; then
+	if [[ -f /etc/fenix-release ]]; then
 		if [[ -n "${mark}" ]]; then
-			LIST+=( "Defreeze" "Enable Armbian kernel upgrades " )
+			LIST+=( "Defreeze" "Enable kernel upgrades " )
 		else
-			LIST+=( "Freeze" "Disable Armbian kernel upgrades " )
+			LIST+=( "Freeze" "Disable kernel upgrades " )
 		fi
-	fi
-
-	# armbian specific function, when upgrades are enabled
-	if [[ -z ${mark} ]]; then
-		[[ -f /etc/apt/sources.list.d/armbian.list ]] && [[ -n $(grep -w apt /etc/apt/sources.list.d/armbian.list) ]] \
-		&& LIST+=( "Nightly" "Switch to nightly automated builds" )
-		[[ -f /etc/apt/sources.list.d/armbian.list ]] && [[ -n $(grep -w beta /etc/apt/sources.list.d/armbian.list) ]] \
-		&& LIST+=( "Stable" "Switch to stable builds" )
 	fi
 
 	[[ -n $(grep -w "#kernel.printk" /etc/sysctl.conf ) ]] && LIST+=( "Lowlevel" "Stop low-level messages on console" )
 
-	[[ -f /boot/armbianEnv.txt ]] && LIST+=( "Bootenv" "Edit boot environment" )
+	[[ -f /boot/uEnv.txt ]] && LIST+=( "Bootenv" "Edit boot environment" )
 	[[ -f /boot/boot.ini ]] && LIST+=( "Bootscript" "Edit boot script" )
 
 	if [[ -f /etc/default/cpufrequtils ]]; then
@@ -72,13 +64,6 @@ while true; do
 
 	[[ -d ${OVERLAYDIR} ]] && \
 	LIST+=( "Hardware" "Toggle hardware configuration: UART, I2C, etc." )
-	[[ "$LINUXFAMILY" = cubox && "$BRANCH" = "current" ]] && LIST+=( "DTB" "Switch board .dtb configuration" )
-	# this is avaliable only in kernel higher than 4.10
-	testvercomp "$(uname -r | sed 's/-.*//')" "4.10.0" ">"
-	[[ "$LINUXFAMILY" = odroidxu4 && $? == 0 ]] && LIST+=( "DTB" "Select optimised board configuration" )
-	[[ -f /usr/bin/bin2fex && "$LINUXFAMILY" = sun*i && "$BRANCH" = "default" ]] && LIST+=( "Fexedit" "Board (fex) settings editor" )
-
-	[[ -z ${mark} ]] && [[ -f /etc/apt/sources.list.d/armbian.list ]] && LIST+=( "Other" "Switch to other kernels" )
 
 	LIST+=( "SSH" "Reconfigure SSH daemon" )
 	LIST+=( "Firmware" "Update all packages and firmware" )
@@ -89,10 +74,6 @@ while true; do
 		LIST+=( "ZSH" "Install ZSH with plugins and tmux" )
 	fi
 
-
-	[[ "$LINUXFAMILY" = sun*i && "$BRANCH" = "default" && \
-	-n $(bin2fex </boot/script.bin 2>/dev/null | grep -w "hdmi_used = 1") ]] && LIST+=( "Display" "Set the display resolution" )
-	[[ "$LINUXFAMILY" = odroidc* || "$LINUXFAMILY" = odroidn2 && "$BRANCH" = "default" ]] && LIST+=( "Display" "Set the display resolution" )
 	# desktop
 	if [[ -n $DISPLAY_MANAGER ]]; then
 		LIST+=( "Desktop" "Disable desktop or change login type" )

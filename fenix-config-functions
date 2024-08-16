@@ -53,9 +53,10 @@ function main(){
 	LOCALIPADD=$(ip -4 addr show dev $DEFAULT_ADAPTER | awk '/inet/ {print $2}' | cut -d'/' -f1)
 	BACKTITLE="Configuration utility, $FENIX"
 	[[ -n "$LOCALIPADD" ]] && BACKTITLE=$BACKTITLE", "$LOCALIPADD
-	TITLE="$BOARD_NAME "
+	TITLE="$BOARD "
 	[[ -z "${DEFAULT_ADAPTER// }" ]] && DEFAULT_ADAPTER="lo"
-	OVERLAYDIR="/boot/dtb/overlay";
+	OVERLAYDIR=$(ls -d /boot/overlays/*${BOARD@L}.dtb.overlays)
+	OVERLAYCONF=$(ls -d /boot/overlays/*${BOARD@L}.dtb.overlay.env)
 	# detect desktop
 	check_desktop
 	dialog --backtitle "$BACKTITLE" --title "Please wait" --infobox "\nLoading Fenix configuration utility ... " 5 45
