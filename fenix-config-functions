@@ -44,26 +44,22 @@ function main(){
 		debconf-apt-progress -- apt -y -qq --allow-downgrades --no-install-recommends install lsb-release
 	fi
 
-	[[ -f /etc/armbian-release ]] && source /etc/armbian-release && ARMBIAN="Armbian $VERSION $IMAGE_TYPE";
+	[[ -f /etc/fenix-release ]] && source /etc/fenix-release && FENIX="Fenix $VERSION";
 	DISTRO=$(lsb_release -is)
 	DISTROID=$(lsb_release -sc)
 	KERNELID=$(uname -r)
-	[[ -z "${ARMBIAN// }" ]] && ARMBIAN="$DISTRO $DISTROID"
+	FENIX+=" - $DISTRO $DISTROID"
 	DEFAULT_ADAPTER=$(ip -4 route ls | grep default | tail -1 | grep -Po '(?<=dev )(\S+)')
 	LOCALIPADD=$(ip -4 addr show dev $DEFAULT_ADAPTER | awk '/inet/ {print $2}' | cut -d'/' -f1)
-	BACKTITLE="Configuration utility, $ARMBIAN"
+	BACKTITLE="Configuration utility, $FENIX"
 	[[ -n "$LOCALIPADD" ]] && BACKTITLE=$BACKTITLE", "$LOCALIPADD
 	TITLE="$BOARD_NAME "
 	[[ -z "${DEFAULT_ADAPTER// }" ]] && DEFAULT_ADAPTER="lo"
 	OVERLAYDIR="/boot/dtb/overlay";
-	[[ "$LINUXFAMILY" == "sunxi64" ]] && OVERLAYDIR="/boot/dtb/allwinner/overlay";
-	[[ "$LINUXFAMILY" == "meson64" ]] && OVERLAYDIR="/boot/dtb/amlogic/overlay";
-	[[ "$LINUXFAMILY" == "rockchip64" || "$LINUXFAMILY" == "rk3399" || "$LINUXFAMILY" == "rockchip-rk3588" || "$LINUXFAMILY" == "rk35xx" ]] && OVERLAYDIR="/boot/dtb/rockchip/overlay";
 	# detect desktop
 	check_desktop
-	dialog --backtitle "$BACKTITLE" --title "Please wait" --infobox "\nLoading Armbian configuration utility ... " 5 45
+	dialog --backtitle "$BACKTITLE" --title "Please wait" --infobox "\nLoading Fenix configuration utility ... " 5 45
 	sleep 1
-
 }
 
 
