@@ -766,40 +766,32 @@ function configure_desktop ()
 
 		# remove desktop package to secure proper install
 		if check_if_installed $TARGET_DESKTOP ; then
-			debconf-apt-progress -- apt-get -y \
-			remove $TARGET_DESKTOP lightdm lightdm-gtk-greeter
+			debconf-apt-progress -- apt-get -y remove $TARGET_DESKTOP
+			debconf-apt-progress -- apt-get -y autoremove
 		fi
 
+		apt-mark showhold | grep -q flash-kernel || apt-mark hold flash-kernel
+		# apparmor fails to install due to missing libtext-iconv-perl
+		debconf-apt-progress -- apt-get install -y libtext-iconv-perl
+
 		# install desktop package
-		debconf-apt-progress -- apt-get --reinstall -o Dpkg::Options::="--force-confdef" \
-		-o Dpkg::Options::="--force-confold" -y \
-		install $1 ${TARGET_DESKTOP} lightdm lightdm-gtk-greeter
+		debconf-apt-progress --logfile /tmp/$$.pid -- apt-get --reinstall -o Dpkg::Options::="--force-confdef" \
+			-o Dpkg::Options::="--force-confold" -y install $1 ${TARGET_DESKTOP}
 
 		# in case previous install was interrupted
-		[[ $? -eq 130 ]] && dpkg --configure -a
+		if [[ $? -ne 0 ]]; then
+			dpkg --configure -a
+			echo "Failed to configure desktop environment"
+			exit 1
+		fi
 
 		# clean apt cache
 		apt clean
 
 		# add user to groups
 		for additionalgroup in sudo netdev audio video dialout plugdev input bluetooth systemd-journal ssh; do
-				usermod -aG ${additionalgroup} ${CHOSEN_USER} 2>/dev/null
+			usermod -aG ${additionalgroup} ${CHOSEN_USER} 2>/dev/null
 		done
-
-		# Prevent loading paralel printer port drivers which we don't need here.
-		# suppress boot error if kernel modules are absent
-		if [[ -f /etc/modules-load.d/cups-filters.conf ]]; then
-			sed "s/^lp/#lp/" -i /etc/modules-load.d/cups-filters.conf
-			sed "s/^ppdev/#ppdev/" -i /etc/modules-load.d/cups-filters.conf
-			sed "s/^parport_pc/#parport_pc/" -i /etc/modules-load.d/cups-filters.conf
-		fi
-
-		# enable show windows content on stronger boards
-		cpu_cores=$(grep -c '^processor' /proc/cpuinfo | sed 's/^0$/1/')
-		if [[ ${cpu_cores} -gt 2 && -f /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml ]]; then
-			sed -i 's/<property name="box_move" type="bool" value=".*/<property name="box_move" type="bool" value="false"\/>/g' \
-			/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml
-		fi
 
 		# fix for gksu in Xenial
 		touch /home/${CHOSEN_USER}/.Xauthority
@@ -812,15 +804,12 @@ function configure_desktop ()
 			touch /home/${CHOSEN_USER}/.activate_psd
 		fi
 
-		mkdir -p /etc/lightdm/lightdm.conf.d
-		echo "[Seat:*]" > /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf
-		echo "autologin-user=$CHOSEN_USER" >> /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf
-		echo "autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf
-		echo "user-session=xfce" >> /etc/lightdm/lightdm.conf.d/22-armbian-autologin.conf
-		ln -s /lib/systemd/system/lightdm.service /etc/systemd/system/display-manager.service >/dev/null 2>&1
 		# fix permissions
 		chown -R ${CHOSEN_USER}:${CHOSEN_USER} /home/${CHOSEN_USER}/.
-		service lightdm start >/dev/null 2>&1
+		# Ask user if he wants to enable autologin and act accordingly
+
+		check_desktop
+		jobs "Desktop"
 	fi
 
 }

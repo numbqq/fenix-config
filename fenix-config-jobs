@@ -1069,7 +1069,7 @@ function jobs ()
 	"Default" )
 
 		RELEASE=$(source /etc/os-release; echo $VERSION_CODENAME)
-		LIST=($(apt list 2>/dev/null | grep fenix | grep desktop | grep -v bsp | grep "\-"$RELEASE | sed "s/\/$RELEASE,$RELEASE//g" | cut -d" " -f1-2))
+		LIST=($(apt list 2>/dev/null | grep fenix | grep desktop | grep -v bsp | grep "\-"$RELEASE | sed "s/\/$RELEASE,$RELEASE\(,now\)*//g" | cut -d" " -f1-2))
 		LIST_LENGTH=$((${#LIST[@]}/2));
 		exec 3>&1
 			TARGET_DESKTOP=$(dialog --cancel-label "Cancel" --backtitle "$BACKTITLE" --no-collapse --title "Select Fenix optimised desktop" --clear --menu "" $((6+${LIST_LENGTH})) 52 25 "${LIST[@]}" 2>&1 1>&3)
