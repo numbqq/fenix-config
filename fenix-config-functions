@@ -17,7 +17,6 @@
 # show_box
 # description
 # generic_select
-# reload_bsp
 # other_kernel_version
 # aval_dtbs
 # get_a20modes
@@ -292,26 +291,11 @@ function description
 		*updates*)
 			echo "Display number of available updates"
 		;;
-		*armbian-config*)
+		*fenix-config*)
 			echo "Show command for system configuration"
 		;;
 		*autoreboot-warn*)
 			echo "Show warning when reboot is needed"
-		;;
-		*uk.armbian.com*)
-			echo "United Kingdom"
-		;;
-		*mirrors.tuna.tsinghua.edu.cn/armbian/*)
-			echo "China"
-		;;
-		*mirrors.netix.net/armbian/apt/*)
-			echo "Bulgarija"
-		;;
-		*mirrors.dotsrc.org/armbian-apt/*)
-			echo "Denmark"
-		;;
-		*.armbian.com*)
-			echo "Estonia"
 		;;
 		*)
 			echo ""
@@ -347,80 +331,6 @@ function generic_select()
 		exec 3>&-
 	fi
 }
-
-
-
-
-#
-# reload kernel, bsp and armbian-config
-#
-function reload_bsp(){
-
-	# switch to defined branch
-	[[ -n "$1" ]] && BRANCH=$1
-
-	# deal with exceptions
-	if [[ $BRANCH == current || $BRANCH == dev || $BRANCH == edge ]]; then
-		[[ ${LINUXFAMILY} == rk3399 || ${LINUXFAMILY} == rk35xx ]] && LINUXFAMILY=rockchip64
-	fi
-
-	clear
-	debconf-apt-progress -- apt-get update
-
-	# must exits
-	PACKAGE_INSTALL="linux-image-${BRANCH}-${LINUXFAMILY} linux-dtb-${BRANCH}-${LINUXFAMILY}"
-	PACKAGE_PURGE="linux-image* linux-dtb*"
-
-	# create install and remove logic
-	command=$(LC_ALL=C apt-get --download-only --simulate --allow-downgrades -y --no-install-recommends install linux-${DISTROID}-root-${BRANCH}-${BOARD} 2>/dev/null)
-	if [[ $? -eq 0 && -z $(echo $command | grep "not possible") ]]; then
-		PACKAGE_INSTALL+=" linux-${DISTROID}-root-${BRANCH}-${BOARD}"
-		PACKAGE_PURGE+=" linux-${DISTROID}-root*"
-	fi
-
-	command=$(LC_ALL=C apt-get --download-only --simulate --reinstall --allow-downgrades -y --no-install-recommends install linux-u-boot-${BOARD}-${BRANCH} 2>/dev/null)
-	if [[ $? -eq 0 && -z $(echo $command | grep "not possible") ]]; then
-		PACKAGE_INSTALL+=" linux-u-boot-${BOARD}-${BRANCH}"
-		PACKAGE_PURGE+=" linux-u-boot-${BOARD}-*"
-	fi
-
-	if check_if_installed armbian-${DISTROID}-desktop ; then
-		PACKAGE_INSTALL+=" armbian-${DISTROID}-desktop"
-		PACKAGE_PURGE+=" armbian-${DISTROID}-desktop*"
-	fi
-
-	if check_if_installed linux-headers-${BRANCH}-${FAMILY} ; then
-		PACKAGE_INSTALL+=" linux-headers-${BRANCH}-${FAMILY}"
-		PACKAGE_PURGE+=" linux-headers*"
-	fi
-
-	debconf-apt-progress -- apt-get -o Dpkg::Options::="--force-confold" --force-yes --download-only --allow-downgrades -y --no-install-recommends install $PACKAGE_INSTALL
-	# if download is ok, remove old packages
-	if [[ $? = 0 ]]; then
-
-		debconf-apt-progress -- apt-get -y -qq purge $PACKAGE_PURGE
-		find "/boot/" -name "System.map*" -type f -delete
-		find "/boot/" -name "config*" -type f -delete
-		find "/boot/" -name "vmlinuz*" -type f -delete
-		find "/boot/" -name "*nitrd*" -type f -delete
-		find "/boot/" -name "*Image" -type l -delete
-
-		# install packages
-		echo $PACKAGE_INSTALL >> /var/log/upgrade.log
-		debconf-apt-progress -- apt-get -y -qq --allow-downgrades --no-install-recommends --reinstall \
-		-o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install $PACKAGE_INSTALL
-
-		if [[ $? -eq 1 ]]; then
-			echo "Something went wrong ... check logs."; exit;
-		else
-			apt clean
-		fi
-
-	fi
-
-}
-
-
 
 
 function other_kernel_version ()
@@ -750,7 +660,7 @@ function google_token_allusers ()
 
 
 #
-# configure armbian desktop
+# configure fenix desktop
 #
 function configure_desktop ()
 {

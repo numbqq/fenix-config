@@ -1,29 +1,20 @@
-NOTICE: We are refactoring this tool. [Your input & help is more then welcome!](https://forum.armbian.com/topic/16933-armbian-config-rfc-ideas)
-
-# Armbian configuration utility
+# Fenix configuration utility
 
 Utility for configuring your board, adjusting services and installing applications.
 It comes with Armbian by default.
 
 Login as root and type:
 
-	armbian-config
-
-![](images/animated.gif)
+	fenix-config
 
 - **system**
 	- install to SATA, eMMC, NAND or USB
 	- freeze and unfreeze kernel and BSP upgrades
-	- switching between available kernels and nightly builds
 	- edit boot environment
-	- reconfigure board settings with DT overlays or FEX (Allwinner legacy)
-	- select dedicated DTB (Solidrun i.MX6 and Odroid XU4/HC1/HC2 boards)
+	- reconfigure board settings with DT overlays
 	- adjust SSH daemon features
-	- 3G/4G LTE modem management
 	- run apt update and upgrade
-	- toggle BASH/ZSH with [Oh My ZSH](https://ohmyz.sh/) and [tmux](https://en.wikipedia.org/wiki/Tmux)
 	- toggle desktop and login manager (desktop builds)
-	- adjusting the display resolution (some boards)
 	- enabling read only root filesystem (Ubuntu)
 - **network**
 	- select dynamic or static IP address
@@ -62,46 +53,12 @@ Login as root and type:
 - **help**
 	- Links to documentation, support and sources
 
-**Run this utility on 3rd party Debian based distributions**
-
-        sudo wget https://apt.armbian.com/armbian.key -O key
-        sudo gpg --dearmor < key | sudo tee /usr/share/keyrings/armbian.gpg > /dev/null
-        sudo chmod go+r /usr/share/keyrings/armbian.gpg
-        sudo echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/armbian.gpg] http://apt.armbian.com $(lsb_release -cs) main  $(lsb_release -cs)-utils  $(lsb_release -cs)-desktop" | sudo tee /etc/apt/sources.list.d/armbian.list
-        apt update
-        apt install armbian-config
-
 Development version:
 
 	# Install dependencies
-	apt install git iperf3 psmisc curl bc expect dialog network-manager sunxi-tools \
+	apt install git iperf3 psmisc curl bc expect dialog network-manager \
 	debconf-utils unzip dirmngr software-properties-common psmisc jq
 
-	git clone https://github.com/armbian/config
-	cd config
-	bash debian-config
-
-# Software testings
-
-|Application name|Buster|Stretch*|Bionic*|Focal|Test install|
-|:--|:--:|:--:|:--:|:--:|--:|
-|TV headend (IPTV server)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||15.11.2020|
-|Syncthing (personal cloud)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||15.11.2020|
-|SoftEther VPN server (VPN server)|:grey_question:|:heavy_check_mark:|:heavy_check_mark:||09.03.2019|
-|Plex (Plex media server)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||15.07.2019|
-|Emby (Emby server)|:heavy_check_mark:|:heavy_check_mark:|:grey_question:||24.07.2019|
-|Radarr (Movie downloading server)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||10.06.2019|
-|Sonarr (TV shows downloading server)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||10.06.2019|
-|Transmission (torrent server)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||10.06.2019|
-|ISPConfig (WEB, SMTP, POP, IMAP, FTPD, MYSQL server)|:grey_question:|:heavy_check_mark:|:heavy_check_mark:||29.09.2018|
-|NCP (Nextcloud personal cloud)|:grey_question:|:heavy_check_mark:|n/a||19.05.2019|
-|OpenMediaVault NAS (NAS server)|:heavy_check_mark:|:heavy_check_mark:|n/a||24.07.2019|
-|OpenHAB (Smarthome suite)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|19.9.2021|
-|Home Assistant (Smarthome suite within Docker)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||09.03.2019|
-|PI hole (ad blocker)|:grey_question:|:heavy_check_mark:|:heavy_check_mark:||09.03.2019|
-|UrBackup (client/server backup system)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||10.06.2019|
-|Docker (Docker CE engine)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||10.06.2019|
-|Mayan EDMS (Document management system within Docker)|:grey_question:|:heavy_check_mark:|:heavy_check_mark:||29.09.2018|
-|MiniDLNA (Media sharing)|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:||10.06.2019|
-
-\* no longer supported
+	git clone https://github.com/numbqq/fenix-config
+	cd fenix-config
+	bash fenix-config
