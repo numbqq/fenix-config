@@ -539,13 +539,10 @@ install_omv (){
 #
 # Install OpenMediaVault on Debian
 #
-if [ -f /etc/armbian-release ]; then
-	. /etc/armbian-release
-fi
 
-# Requirement: OMV5 = Debian Buster, OMV 6 = Debian Bullseye
-if [[ "$distribution" != "buster" ]] && [[ "$distribution" != "bullseye" ]]; then
-		dialog --backtitle "$BACKTITLE" --title "Dependencies not met" --msgbox "\nOpenMediaVault can only be installed on Debian Buster (OMV 5) or Debian Bullseye (OMV 6)." 7 52
+# Requirement: OMV6 = Debian Bullseye, OMV 7 = Debian Bookworm
+if [[ "$distribution" != "bullseye" ]] && [[ "$distribution" != "bookworm" ]]; then
+		dialog --backtitle "$BACKTITLE" --title "Dependencies not met" --msgbox "\nOpenMediaVault can only be installed on Debian Bullseye (OMV 6) or Debian Bookworm (OMV 7)." 7 52
 		sleep 5
 		exit 1
 fi
@@ -559,43 +556,6 @@ clear
 echo "Starting OpenMediaVault install. Be patient, it will take several minutes..."
 sleep 2
 bash ${TEMP_DIR}/omv_install.sh -r
-
-# Board Specific Tweak
-echo "Now applying board tweak if required..."
-
-# Hardkernel Cloudshell 1 and 2 fixes, read the whole thread for details:
-# https://forum.openmediavault.org/index.php/Thread/17855
-lsusb | grep -q -i "05e3:0735" && sed -i "/exit 0/i echo 20 > /sys/class/block/sda/queue/max_sectors_kb" /etc/rc.local
-
-case ${BOARD} in
-	odroidxu4)
-		apt install -y i2c-tools
-		/usr/sbin/i2cdetect -y 1 | grep -q "60: 60"
-		if [ $? -eq 0 ]; then
-			add-apt-repository -y ppa:kyle1117/ppa
-			apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3028C3C96AD57103
-			sed -i 's/hirsute/focal/' /etc/apt/sources.list.d/kyle1117-ubuntu-ppa-hirsute.list
-			apt update
-			apt install -y -q cloudshell-lcd odroid-cloudshell cloudshell2-fan
-			lsusb -v | awk -F"__" '/RANDOM_/ {print $2}' | head -n1 | while read ; do
-				echo "ATTRS{idVendor}==\"152d\", ATTRS{idProduct}==\"0561\", KERNEL==\"sd*\", ENV{DEVTYPE}==\"disk\", SYMLINK=\"disk/by-id/\$env{ID_BUS}-CloudShell2-${REPLY}-\$env{ID_MODEL}\"" >> /etc/udev/rules.d/99-cloudshell2.rules
-				echo "ATTRS{idVendor}==\"152d\", ATTRS{idProduct}==\"0561\", KERNEL==\"sd*\", ENV{DEVTYPE}==\"partition\", SYMLINK=\"disk/by-id/\$env{ID_BUS}-CloudShell2-${REPLY}-\$env{ID_MODEL}-part%n\"" >> /etc/udev/rules.d/99-cloudshell2.rules
-			done
-		fi
-		;;
-	helios4)
-		# Make mdadm display fault events on Fault LED
-		# NOTE : this is not a permanent approach need to be improved via some OMV core code change
-		if [ -f /usr/sbin/mdadm-fault-led.sh ]; then
-			cat <<EOF > /srv/salt/omv/deploy/mdadm/25faultled.sls
-mdadm_add_program_config:
-  cmd.run:
-    - name: "echo -e '\n# Trigger Fault Led script when an event is detected\nPROGRAM /usr/sbin/mdadm-fault-led.sh' >> /etc/mdadm/mdadm.conf"
-EOF
-			/usr/sbin/omv-salt deploy run mdadm
-		fi
-	;;
-esac
 
 if check_if_installed openmediavault; then
 	dialog --colors --backtitle "$BACKTITLE" --no-collapse --title "OMV Installation" --yesno "\nIt is recommended to reboot your system to finish OMV setup. Do you want to reboot now?" 8 80
@@ -632,30 +592,18 @@ fi
 
 install_docker ()
 {
-case $distribution in
-	jammy)
+	if wget -q -t 1 --timeout=5 --spider https://download.docker.com/linux/${family,,}/dists/${distribution}/stable ; then
 		mkdir -p /etc/apt/keyrings
-		curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+		curl -fsSL https://download.docker.com/linux/${family,,}/gpg \
 			| gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/${family,,} $(lsb_release -cs) stable" \
 			> /etc/apt/sources.list.d/docker.list
 		debconf-apt-progress -- apt-get update
 		debconf-apt-progress -- apt-get install -y -qq --no-install-recommends docker-ce docker-ce-cli containerd.io
-	;;
-	bullseye|buster)
-		mkdir -p /etc/apt/keyrings
-		curl -fsSL https://download.docker.com/linux/debian/gpg \
-			| gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" > \
-			/etc/apt/sources.list.d/docker.list
-		debconf-apt-progress -- apt-get update
-		debconf-apt-progress -- apt-get install -y -qq --no-install-recommends docker-ce docker-ce-cli containerd.io
-	;;
-	*)
+	else
 		debconf-apt-progress -- apt-get update
 		debconf-apt-progress -- apt-get install -y -qq --no-install-recommends docker.io
-	;;
-esac
+	fi
 }
 
 
