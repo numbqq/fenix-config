@@ -93,15 +93,6 @@ function jobs ()
 		fi
 	;;
 
-
-	# Simple CLI monitoring
-	#
-	"Monitor" )
-		clear
-		armbianmonitor -m
-		sleep 2
-	;;
-
 	# SBC-becn
 	#
 	"Benchmarking" )
@@ -110,16 +101,6 @@ function jobs ()
 			chmod +x /usr/local/bin/sbc-bench
 		fi
 		sbc-bench
-		echo ""
-		read -n 1 -s -p "Press any key to continue"
-	;;
-
-
-	# Send diagnostics
-	#
-	"Diagnostics" )
-		clear
-		armbianmonitor -u
 		echo ""
 		read -n 1 -s -p "Press any key to continue"
 	;;
