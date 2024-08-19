@@ -55,27 +55,27 @@
 #
 # load functions, local first
 #
-if  [[ -f debian-config-jobs ]]; then source debian-config-jobs;
-	elif  [[ -f /usr/lib/armbian-config/jobs.sh ]]; then \
-	source /usr/lib/armbian-config/jobs.sh;
+if  [[ -f fenix-config-jobs ]]; then source fenix-config-jobs;
+	elif  [[ -f /usr/lib/fenix-config/jobs.sh ]]; then \
+	source /usr/lib/fenix-config/jobs.sh;
 	else exit 1;
 fi
 
-if  [[ -f debian-config-submenu ]]; then source debian-config-submenu;
-	elif  [[ -f /usr/lib/armbian-config/submenu.sh ]]; then \
-	source /usr/lib/armbian-config/submenu.sh;
+if  [[ -f fenix-config-submenu ]]; then source fenix-config-submenu;
+	elif  [[ -f /usr/lib/fenix-config/submenu.sh ]]; then \
+	source /usr/lib/fenix-config/submenu.sh;
 	else exit 1;
 fi
 
-if  [[ -f debian-config-functions ]]; then source debian-config-functions;
-	elif  [[ -f /usr/lib/armbian-config/functions.sh ]]; then \
-	source /usr/lib/armbian-config/functions.sh;
+if  [[ -f fenix-config-functions ]]; then source fenix-config-functions;
+	elif  [[ -f /usr/lib/fenix-config/functions.sh ]]; then \
+	source /usr/lib/fenix-config/functions.sh;
 	else exit 1;
 fi
 
-if  [[ -f debian-config-functions-network ]]; then source debian-config-functions-network;
-	elif  [[ -f /usr/lib/armbian-config/functions-network.sh ]]; then \
-	source /usr/lib/armbian-config/functions-network.sh;
+if  [[ -f fenix-config-functions-network ]]; then source fenix-config-functions-network;
+	elif  [[ -f /usr/lib/fenix-config/functions-network.sh ]]; then \
+	source /usr/lib/fenix-config/functions-network.sh;
 	else exit 1;
 fi
 
@@ -706,80 +706,6 @@ service transmission-daemon restart
 exit 0
 EOF
 }
-
-
-
-install_transmission_seed_armbian_torrents ()
-{
-#
-# seed our torrents
-#
-# adjust network buffers if necessary
-rmem_recommended=4194304
-wmem_recommended=1048576
-rmem_actual=$(sysctl net.core.rmem_max | awk -F" " '{print $3}')
-if [ ${rmem_actual} -lt ${rmem_recommended} ]; then
-	grep -q net.core.rmem_max /etc/sysctl.conf && \
-		sed -i "s/net.core.rmem_max =.*/net.core.rmem_max = ${rmem_recommended}/" /etc/sysctl.conf || \
-		echo "net.core.rmem_max = ${rmem_recommended}" >> /etc/sysctl.conf
-fi
-wmem_actual=$(sysctl net.core.wmem_max | awk -F" " '{print $3}')
-if [ ${wmem_actual} -lt ${wmem_recommended} ]; then
-	grep -q net.core.wmem_max /etc/sysctl.conf && \
-		sed -i "s/net.core.wmem_max =.*/net.core.wmem_max = ${wmem_recommended}/" /etc/sysctl.conf || \
-		echo "net.core.wmem_max = ${wmem_recommended}" >> /etc/sysctl.conf
-fi
-/sbin/sysctl -p >/dev/null 2>&1
-# create cron job for daily sync with official Armbian torrents
-cat > /etc/cron.daily/seed-armbian-torrent <<"EOF"
-#!/bin/bash
-#
-# armbian torrents auto update
-#
-# download latest torrent pack
-TEMP_DIR=$(mktemp -d || exit 1)
-chmod 700 ${TEMP_DIR}
-trap "rm -rf \"${TEMP_DIR}\" ; exit 0" 0 1 2 3 15
-wget -qO- -O ${TEMP_DIR}/armbian-torrents.zip https://dl.armbian.com/torrent/all-torrents.zip
-# test zip for corruption
-unzip -t ${TEMP_DIR}/armbian-torrents.zip >/dev/null 2>&1
-[[ $? -ne 0 ]] && echo "Error in zip" && exit
-# extract zip
-unzip -o ${TEMP_DIR}/armbian-torrents.zip -d ${TEMP_DIR}/torrent-tmp >/dev/null 2>&1
-# create list of current active torrents
-transmission-remote -n 'transmission:transmission' -l | sed '1d; $d' > ${TEMP_DIR}/torrent-tmp/active.torrents
-# loop and add/update torrent files
-for f in ${TEMP_DIR}/torrent-tmp/*.torrent; do
-        transmission-remote -n 'transmission:transmission' -a $f > /dev/null 2>&1
-        # remove added from the list
-        pattern="${f//.torrent}"; pattern="${pattern##*/}";
-        sed -i "/$pattern/d" ${TEMP_DIR}/torrent-tmp/active.torrents
-done
-# remove old armbian torrents
-while read i; do
-        [[ $i == *Armbian_* || $i == *gcc-linaro-* || $i == *tar.lz4 ]] && transmission-remote -n 'transmission:transmission' -t $(echo "$i" | awk '{print $1}';) --remove-and-delete
-done < ${TEMP_DIR}/torrent-tmp/active.torrents
-# remove temporally files and direcotories
-# prepare to serve files via www as well
-#WEBROOT="/var/www/html/dl/"
-#TORRENT="/var/lib/transmission-daemon/downloads/"
-#mkdir -p ${WEBROOT}
-#find ${WEBROOT} -type l -delete
-#curl -sq http://redirect.armbian.com/dl_map | jq -Mr '.' |  tr -d \"," " | grep -v nightly | sort | cut -d":" -f2 | tail -n+3 > test.txt
-#cat test.txt | cut -d"/" -f1,2 | uniq | xargs -n1 -i{} mkdir -p "${WEBROOT}{}"
-#mkdir -p ${WEBROOT}_rootfs ${WEBROOT}_toolchain
-#cat test.txt | grep ".xz$" | awk -F "/" '{print "'$TORRENT'"$3 " '$WEBROOT'"$1"/"$2"/"$3}' | xargs -I% -n 2 ln -sf
-#rsync -aq --delete --exclude="*.xz" --exclude="nightly" rsync://mirrors.dotsrc.org/armbian-dl/ ${WEBROOT}
-EOF
-chmod +x /etc/cron.daily/seed-armbian-torrent
-/etc/cron.daily/seed-armbian-torrent &
-}
-
-
-
-
-
-
 
 
 install_openhab ()
@@ -1613,7 +1539,7 @@ set ${serverIP//./ }
 SUBNET="$1.$2.$3."
 hostnamefqdn=$(hostname -f)
 mysql_pass=""
-BACKTITLE="Softy - Armbian post deployment scripts, https://www.armbian.com"
+BACKTITLE="Softy - Fenix post deployment scripts, https://www.khadas.com"
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #check_status
@@ -1746,12 +1672,6 @@ if ! is_package_manager_running; then
 		if [[ "$selection" == *Transmission* && "$TRANSMISSION_STATUS" != "on" ]]; then
 			install_transmission
 			selection=${selection//Transmission/}
-			dialog --title "Seed Armbian torrents" --backtitle "$BACKTITLE" --yes-label "Yes" --no-label "No" --yesno "\
-			\nDo you want to help the community and seed armbian torrent files? It will ensure faster downloads for everyone.\
-			\n\nApproximately 1TB disk space is required." 11 44
-				if [[ $? = 0 ]]; then
-					install_transmission_seed_armbian_torrents
-				fi
 		fi
 
 		if [[ "$selection" == *UrBackup* && "$URBACKUP_STATUS" != "on" ]]; then
