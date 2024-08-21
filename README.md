@@ -1,7 +1,7 @@
 # Fenix configuration utility
 
 Utility for configuring your board, adjusting services and installing applications.
-It comes with Armbian by default.
+It comes with Fenix by default.
 
 Login as root and type:
 
@@ -18,7 +18,6 @@ Login as root and type:
 	- enabling read only root filesystem (Ubuntu)
 - **network**
 	- select dynamic or static IP address
-	- hotspot management. Automatic detection of: nl80211, realtek, 802.11n, 802.11a and 802.11ac
 	- iperf3. Toggle bandwidth measuring server
 	- connect to wireless
 	- install IR support
@@ -47,9 +46,7 @@ Login as root and type:
 		- [Docker](https://www.docker.com) *(Docker CE engine)*
 		- [Mayan EDMS](https://www.mayan-edms.com/) *(Document management system within Docker)*
 		- [MiniDLNA](http://minidlna.sourceforge.net/) *(media sharing)*
-	- monitoring tools
-	- create diagnostics report
-	- toggle kernel headers, RDP service, Thunderbird and LibreOffice (desktop builds)
+	- toggle kernel headers, RDP service
 - **help**
 	- Links to documentation, support and sources
 

@@ -156,19 +156,18 @@ while true; do
 	# edit ip
 	LIST+=( "IP" "Select dynamic or edit static IP address" )
 
-	# hostapd
-	sudo apt-get -y -qq install hostapd > /dev/null
-	HOSTAPDBRIDGE=$(cat /etc/hostapd.conf 2> /dev/null | grep -w "^bridge=br0")
-	HOSTAPDSTATUS=$(service hostapd status 2> /dev/null | grep -w active | grep -w running)
-	if [[ -n "$HOSTAPDSTATUS" ]]; then
-			HOSTAPDINFO=$(hostapd_cli get_config 2> /dev/null | grep ^ssid | sed 's/ssid=//g')
-			HOSTAPDCLIENTS=$(hostapd_cli all_sta 2> /dev/null | grep connected_time | wc -l)
-			LIST+=( "Hotspot" "Manage active wireless access point" )
-		else
-			[[ -n $(LC_ALL=C nmcli device status 2> /dev/null | grep wifi | grep -w disconnected) ]] && \
-			LIST+=( "Hotspot" "Create WiFi access point" )
-
-	fi
+	# # hostapd
+	# check_if_installed hostapd || apt-get -y -qq install hostapd > /dev/null
+	# HOSTAPDBRIDGE=$(cat /etc/hostapd.conf 2> /dev/null | grep -w "^bridge=br0")
+	# HOSTAPDSTATUS=$(service hostapd status 2> /dev/null | grep -w active | grep -w running)
+	# if [[ -n "$HOSTAPDSTATUS" ]]; then
+	# 		HOSTAPDINFO=$(hostapd_cli get_config 2> /dev/null | grep ^ssid | sed 's/ssid=//g')
+	# 		HOSTAPDCLIENTS=$(hostapd_cli all_sta 2> /dev/null | grep connected_time | wc -l)
+	# 		LIST+=( "Hotspot" "Manage active wireless access point" )
+	# 	else
+	# 		[[ -n $(LC_ALL=C nmcli device status 2> /dev/null | grep wifi | grep -w disconnected) ]] && \
+	# 		LIST+=( "Hotspot" "Create WiFi access point" )
+	# fi
 
 	# toggle IPv6
 	if [[ $(cat /proc/sys/net/ipv6/conf/all/disable_ipv6) == 1 ]]; then
@@ -213,7 +212,7 @@ while true; do
 
 	[[ -d /usr/local/vpnclient ]] && LIST+=( "VPN" "Manage Softether VPN client" ) && VPNSERVERIP=$(/usr/local/vpnclient/vpncmd /client localhost /cmd accountlist | grep "VPN Server" |grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | head -1)
 
-	LIST+=( "Advanced" "Edit /etc/network/interfaces" )
+	[[ -f /etc/network/interfaces ]] && LIST+=( "Advanced" "Edit /etc/network/interfaces" )
 	[[ $(ls -1 /etc/NetworkManager/system-connections 2> /dev/null) ]] && \
 	LIST+=( "Forget" "Disconnect and forget all wireless connections" )
 
