@@ -241,7 +241,7 @@
                 },
                 {
                     "id": "S10",
-                    "description": "Set CPU speed and governor.",
+                    "description": "Set CPU speed and governor",
                     "sub": [
                         {
                             "id": "S1001",
@@ -311,6 +311,50 @@
                     "src_reference": "",
                     "author": "Gunjan Gupta",
                     "condition": "check_if_installed cpufrequtils"
+                },
+                {
+                    "id": "S11",
+                    "description": "Set fan control options",
+                    "sub": [
+                        {
+                            "id": "S1101",
+                            "description": "Set fan mode",
+                            "command": [
+                                "set_fan_controls mode"
+                            ],
+                            "status": "Active",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": ""
+                        },
+                        {
+                            "id": "S1102",
+                            "description": "Set fan level",
+                            "command": [
+                                "set_fan_controls level"
+                            ],
+                            "status": "Active",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": ""
+                        },
+                        {
+                            "id": "S1103",
+                            "description": "Show current fan status",
+                            "command": [
+                                "/usr/local/bin/fan.sh mode | show_message"
+                            ],
+                            "status": "Active",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": ""
+                        }
+                    ],
+                    "status": "Active",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "Gunjan Gupta",
+                    "condition": "[ -e /usr/local/bin/fan.sh ] && [ -e /sys/class/fan/mode ]  && [ -e /sys/class/fan/level ]"
                 }
             ]
         },

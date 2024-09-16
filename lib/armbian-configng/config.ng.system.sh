@@ -194,6 +194,8 @@ function set_cpufreq_option () {
 	local policy=$(ls /sys/devices/system/cpu/cpufreq/ | tail -n 1)
 	local selected_value=""
 
+	unset PARAMETER
+
 	case "$1" in
 		MIN_SPEED)
 			generic_select "$(cat /sys/devices/system/cpu/cpufreq/$policy/scaling_available_frequencies 2>/dev/null)" "Select minimum CPU speed"
@@ -216,5 +218,38 @@ function set_cpufreq_option () {
 	if [[ -n $selected_value ]]; then
 		sed -i "s/$1=.*/$1=$selected_value/" /etc/default/cpufrequtils
 		systemctl restart cpufrequtils
+	fi
+}
+
+module_options+=(
+["set_fan_controls,author"]="Gunjan Gupta"
+["set_fan_controls,ref_link"]=""
+["set_fan_controls,feature"]="fan control"
+["set_fan_controls,desc"]="Set fan control options"
+["set_fan_controls,example"]="set_fan_controls [mode|level]"
+["set_fan_controls,status"]="Active"
+)
+#
+# @description Set fan control options
+#
+function set_fan_controls () {
+	local selected_value=""
+	unset PARAMETER
+
+	case "$1" in
+		mode)
+			generic_select "on auto off" "Set fan mode"
+			;;
+		level)
+			generic_select "low mid high" "Set fan speed"
+			;;
+		*)
+			;;
+	esac
+
+	selected_value=$PARAMETER
+
+	if [[ -n $selected_value ]]; then
+		/usr/local/bin/fan.sh $selected_value
 	fi
 }
