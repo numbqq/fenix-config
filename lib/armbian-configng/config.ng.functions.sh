@@ -469,39 +469,6 @@ parse_menu_items() {
 
 
 module_options+=(
-["generate_top_menu,author"]="Joey Turner"
-["generate_top_menu,ref_link"]=""
-["generate_top_menu,feature"]="generate_top_menu"
-["generate_top_menu,desc"]="Build the main menu from a object"
-["generate_top_menu,example"]="generate_top_menu 'json_data'"
-["generate_top_menu,doc_link"]=""
-["generate_top_menu,status"]="Active"
-)
-#
-# Function to generate the main menu from a JSON object
-#
-generate_top_menu() {
-    local json_data=$1
-
-    while true; do
-        local menu_options=()
-
-        parse_menu_items menu_options
-
-        local OPTION=$($DIALOG --title "$TITLE"  --menu "$BACKTITLE" 0 80 9 "${menu_options[@]}" \
-                                --ok-button Select --cancel-button Exit 3>&1 1>&2 2>&3)
-        local exitstatus=$?
-
-        if [ $exitstatus = 0 ]; then
-            [ -z "$OPTION" ] && break
-            [[ -n "$debug" ]] && echo "$OPTION"
-            generate_menu "$OPTION"
-        fi
-    done
-}
-
-
-module_options+=(
 ["generate_menu,author"]="Joey Turner"
 ["generate_menu,ref_link"]=""
 ["generate_menu,feature"]="generate_menu"
@@ -514,14 +481,14 @@ module_options+=(
 # Function to generate the submenu
 #
 function generate_menu() {
-    local parent_id=$1
+    [ $# -eq 1 ] && local parent_id=$1
 
     while true; do
         # Get the submenu options for the current parent_id
-        local submenu_options=()
-        parse_menu_items submenu_options
+        local menu_options=()
+        parse_menu_items menu_options
 
-        local OPTION=$($DIALOG --title "$TITLE"  --menu "$BACKTITLE" 0 80 9 "${submenu_options[@]}" \
+        local OPTION=$($DIALOG --title "$TITLE"  --menu "$BACKTITLE" 0 80 9 "${menu_options[@]}" \
                                 --ok-button Select --cancel-button Back 3>&1 1>&2 2>&3)
 
         local exitstatus=$?

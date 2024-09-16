@@ -175,7 +175,7 @@ esac
 #
 # Generate the top menu with the modified Object data
 set_colors 4
-generate_top_menu "$json_data"
+generate_menu
 
 
 #
