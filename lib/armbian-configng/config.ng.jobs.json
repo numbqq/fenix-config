@@ -805,7 +805,7 @@
                     "id": "H02",
                     "description": "List of Config function(WIP)",
                     "command": [
-                        "show_message <<< see_use"
+                        "see_use | show_message"
                     ],
                     "status": "Active",
                     "doc_link": "",
