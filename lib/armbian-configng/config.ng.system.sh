@@ -155,26 +155,30 @@ module_options+=(
 ["manage_overlayfs,author"]="igorpecovnik"
 ["manage_overlayfs,ref_link"]=""
 ["manage_overlayfs,feature"]="overlayfs"
-["manage_overlayfs,desc"]="Set Armbian root filesystem to read only"
+["manage_overlayfs,desc"]="Set root filesystem to read only"
 ["manage_overlayfs,example"]="manage_overlayfs enable|disable"
 ["manage_overlayfs,status"]="Active"
 )
 #
-# @description set/unset Armbian root filesystem to read only
+# @description set/unset root filesystem to read only
 #
 function manage_overlayfs () {
-
-if [[ "$1" == "enable" ]]; then
-	debconf-apt-progress -- apt-get -o Dpkg::Options::="--force-confold" -y install overlayroot cryptsetup cryptsetup-bin
-	[[ ! -f /etc/overlayroot.conf ]] && cp /etc/overlayroot.conf.dpkg-new /etc/overlayroot.conf
-	sed -i "s/^overlayroot=.*/overlayroot=\"tmpfs\"/" /etc/overlayroot.conf
-	sed -i "s/^overlayroot_cfgdisk=.*/overlayroot_cfgdisk=\"enabled\"/" /etc/overlayroot.conf
+	if [[ "$1" == "enable" ]]; then
+		debconf-apt-progress -- apt-get -o Dpkg::Options::="--force-confold" -y install overlayroot cryptsetup cryptsetup-bin
+		[[ ! -f /etc/overlayroot.conf ]] && cp /etc/overlayroot.conf.dpkg-new /etc/overlayroot.conf
+		sed -i "s/^overlayroot=.*/overlayroot=\"tmpfs\"/" /etc/overlayroot.conf
+		sed -i "s/^overlayroot_cfgdisk=.*/overlayroot_cfgdisk=\"enabled\"/" /etc/overlayroot.conf
 	else	
-	overlayroot-chroot rm /etc/overlayroot.conf > /dev/null 2>&1
-	debconf-apt-progress -- apt-get -y purge overlayroot cryptsetup cryptsetup-bin
-fi
-# reboot is mandatory
-reboot
+		overlayroot-chroot rm /etc/overlayroot.conf > /dev/null 2>&1
+		debconf-apt-progress -- apt-get -y purge overlayroot cryptsetup cryptsetup-bin
+	fi
+
+	$DIALOG --title " Reboot required " --yes-button "Reboot" \
+		--no-button "Cancel" --yesno "\nA reboot is required to apply the changes. Shall we reboot now?" 7 34
+
+	if [[ $? = 0 ]]; then
+		reboot
+	fi
 }
 
 
@@ -252,4 +256,64 @@ function set_fan_controls () {
 	if [[ -n $selected_value ]]; then
 		/usr/local/bin/fan.sh $selected_value
 	fi
+}
+
+
+module_options+=(
+["manage_dtoverlays,author"]="Gunjan Gupta"
+["manage_dtoverlays,ref_link"]=""
+["manage_dtoverlays,feature"]="dtoverlays"
+["manage_dtoverlays,desc"]="Enable/disable device tree overlays"
+["manage_dtoverlays,example"]="manage_dtoverlays"
+["manage_dtoverlays,status"]="Active"
+)
+#
+# @description Enable/disable device tree overlays
+#
+function manage_dtoverlays () {
+	# check if user agree to enter this area
+	local changes="false"
+	local overlaydir=$(ls -d /boot/overlays/*${BOARD@L}.dtb.overlays)
+	local overlayconf=$(ls -d /boot/overlays/*${BOARD@L}.dtb.overlay.env)
+	while true; do
+		local options=()
+		j=0
+
+		available_overlays=$(ls -1 ${overlaydir}/*.dtbo | sed "s#^${overlaydir}/##" | sed 's/.dtbo//g' | tr '\n' ' ')
+
+		for overlay in ${available_overlays}; do
+			local status="OFF"
+			grep '^fdt_overlays' ${overlayconf} | grep -qw ${overlay} && status=ON
+			options+=( "$overlay" "" "$status")
+		done
+
+		selection=$($DIALOG --title "Manage devicetree overlays" --cancel-button "Back" \
+			--ok-button "Save" --checklist "\nUse <space> to toggle functions and save them.\nExit when you are done.\n " \
+			0 0 0 "${options[@]}" 3>&1 1>&2 2>&3)
+		exit_status=$?
+
+		case $exit_status in
+			0)
+				changes="true"
+				newoverlays=$(echo $selection | sed 's/"//g')
+				sed -i "s/^fdt_overlays=.*/fdt_overlays=$newoverlays/" ${overlayconf}
+				if ! grep -q "^fdt_overlays" ${overlayconf}; then echo "fdt_overlays=$newoverlays" >> ${overlayconf}; fi
+				sync
+				;;
+			1)
+				if [[ "$changes" == "true" ]]; then
+					$DIALOG --title " Reboot required " --yes-button "Reboot" \
+						--no-button "Cancel" --yesno "A reboot is required to apply the changes. Shall we reboot now?" 7 34
+					if [[ $? = 0 ]]; then
+						reboot
+					fi
+
+					sleep 30
+				fi
+				break
+				;;
+			255)
+				;;
+		esac
+	done
 }
