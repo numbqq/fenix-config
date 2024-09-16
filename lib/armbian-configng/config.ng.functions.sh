@@ -28,59 +28,6 @@ function check_desktop() {
 }
 
 
-
-menu_options+=(
-["get_headers_kernel,author"]="Igor Pecovnik"
-["get_headers_kernel,ref_link"]=""
-["get_headers_kernel,feature"]="get_headers_install"
-["get_headers_kernel,desc"]="Migrated procedures from Armbian config."
-["get_headers_kernel,example"]="get_headers_install"
-["get_headers_kernel,status"]="Active"
-["get_headers_kernel,doc_link"]=""
-)
-#
-# install kernel headers
-#
-function get_headers_install() {
-
-    if [[ -f /etc/armbian-release ]]; then
-        INSTALL_PKG="linux-headers-${BRANCH}-${LINUXFAMILY}";
-    else
-        INSTALL_PKG="linux-headers-$(uname -r | sed 's/'-$(dpkg --print-architecture)'//')";
-    fi
-
-    debconf-apt-progress -- apt-get -y install ${INSTALL_PKG} || exit 1
-
-}
-
-module_options+=(
-["set_header_remove,author"]="Igor Pecovnik"
-["set_header_remove,ref_link"]=""
-["set_header_remove,feature"]="set_header_remove"
-["set_header_remove,desc"]="Migrated procedures from Armbian config."
-["set_header_remove,example"]="set_header_remove"
-["set_header_remove,doc_link"]=""
-["set_header_remove,status"]="Active"
-["set_header_remove,doc_ink"]=""
-)
-#
-# remove kernel headers
-#
-function set_header_remove() {
-
-    REMOVE_PKG="linux-headers-*"
-    if [[ -n $(dpkg -l | grep linux-headers) ]]; then
-        debconf-apt-progress -- apt-get -y purge ${REMOVE_PKG}
-        rm -rf /usr/src/linux-headers*
-    else
-        debconf-apt-progress -- apt-get -y install ${INSTALL_PKG}
-    fi
-    # cleanup
-    apt clean
-    debconf-apt-progress -- apt -y autoremove
-
-}
-
 module_options+=(
 ["check_if_installed,author"]="Igor Pecovnik"
 ["check_if_installed,ref_link"]=""
@@ -224,15 +171,14 @@ function set_runtime_variables(){
 		debconf-apt-progress -- apt -y -qq --allow-downgrades --no-install-recommends install lsb-release
 	fi
 
-	[[ -f /etc/armbian-release ]] && source /etc/armbian-release && ARMBIAN="Armbian $VERSION $IMAGE_TYPE";
+	[[ -f /etc/fenix-release ]] && source /etc/fenix-release && BACKTITLE="Fenix $VERSION - ";
 	DISTRO=$(lsb_release -is)
 	DISTROID=$(lsb_release -sc)
 	KERNELID=$(uname -r)
-	[[ -z "${ARMBIAN// }" ]] && ARMBIAN="$DISTRO $DISTROID"
+	BACKTITLE+="$DISTRO $DISTROID"
 	DEFAULT_ADAPTER=$(ip -4 route ls | grep default | tail -1 | grep -Po '(?<=dev )(\S+)')
 	LOCALIPADD=$(ip -4 addr show dev $DEFAULT_ADAPTER | awk '/inet/ {print $2}' | cut -d'/' -f1)
-	BACKTITLE="\n    Contribute: https://github.com/armbian/configng\n"
-	TITLE="Armbian configuration utility"
+	TITLE="Fenix configuration utility"
 	[[ -z "${DEFAULT_ADAPTER// }" ]] && DEFAULT_ADAPTER="lo"
 
 	# detect desktop
@@ -242,31 +188,33 @@ function set_runtime_variables(){
 
 
 module_options+=(
-["armbian_fw_manipulate,author"]="Igor Pecovnik"
-["armbian_fw_manipulate,ref_link"]=""
-["armbian_fw_manipulate,feature"]="armbian_fw_manipulate"
-["armbian_fw_manipulate,desc"]="freeze/unhold/reinstall armbian related packages."
-["armbian_fw_manipulate,example"]="armbian_fw_manipulate unhold|freeze|reinstall"
-["armbian_fw_manipulate,status"]="Active"
+["fw_manipulate,author"]="Igor Pecovnik"
+["fw_manipulate,ref_link"]=""
+["fw_manipulate,feature"]="fw_manipulate"
+["fw_manipulate,desc"]="freeze/unhold/reinstall kernel & bsp related packages."
+["fw_manipulate,example"]="fw_manipulate unhold|freeze|reinstall"
+["fw_manipulate,status"]="Active"
 )
 #
-# freeze/unhold/reinstall armbian firmware packages
+# freeze/unhold/reinstall kernel & bsp related packages
 #
-armbian_fw_manipulate() {
+fw_manipulate() {
 
 	function=$1
 
-	# fallback to current
-	[[ -z $BRANCH ]] && BRANCH="current"
-
-	ARMBIAN_PACKAGES=(
-	    "linux-u-boot-${BOARD}-${BRANCH}"
-	    "linux-image-${BRANCH}-${LINUXFAMILY}"
-	    "linux-dtb-${BRANCH}-${LINUXFAMILY}"
-	    "linux-headers-${BRANCH}-${LINUXFAMILY}"
-	    "armbian-config"
-	    "armbian-zsh"
-	    "armbian-bsp-cli-${BOARD}-${BRANCH}"
+	SUPPORTED_PACKAGES=(
+	    "linux-u-boot-${BOARD@L}-vendor"
+        "linux-u-boot-${BOARD@L}-mainline"
+        "linux-image-${VENDOR@L}-${kernel_version}"
+        "linux-dtb-${VENDOR@L}-${kernel_version}"
+        "linux-headers-${VENDOR@L}-${kernel_version}"
+        "linux-board-package-${DISTROID}-${BOARD@L}"
+        "fenix-${DISTRO@L}-${DISTROID}-gnome-desktop"
+        "fenix-${DISTRO@L}-${DISTROID}-lxde-desktop"
+        "fenix-${DISTRO@L}-${DISTROID}-xfce-desktop"
+        "linux-gpu-mali-wayland"
+        "linux-gpu-mali-gbm"
+        "linux-gpu-mali-fbdev"
 	)
 
 	if [[ "${function}" == reinstall ]]; then
@@ -274,14 +222,16 @@ armbian_fw_manipulate() {
 	fi
 
 	PACKAGES=""
-	for PACKAGE in "${ARMBIAN_PACKAGES[@]}"
+	for PACKAGE in "${SUPPORTED_PACKAGES[@]}"
 	do
 			if [[ "${function}" == reinstall ]]; then
 				apt search $PACKAGE 2>/dev/null | grep "^$PACKAGE" >/dev/null
-				if [[ $? -eq 0 ]]; then PACKAGES+="$PACKAGE "; fi
+				if [[ $? -eq 0 ]]; then
+                    PACKAGES+="$PACKAGE ";
+                fi
 			else
 				if check_if_installed $PACKAGE; then
-				PACKAGES+="$PACKAGE "
+				    PACKAGES+="$PACKAGE "
 				fi
 			fi
 	done
@@ -486,10 +436,13 @@ function generate_menu() {
     while true; do
         # Get the submenu options for the current parent_id
         local menu_options=()
+        local back_btn_text="Back"
+        [ $# -eq 0 ] && back_btn_text="Exit"
+
         parse_menu_items menu_options
 
-        local OPTION=$($DIALOG --title "$TITLE"  --menu "$BACKTITLE" 0 80 9 "${menu_options[@]}" \
-                                --ok-button Select --cancel-button Back 3>&1 1>&2 2>&3)
+        local OPTION=$($DIALOG --title "$TITLE" --menu "" 0 80 9 "${menu_options[@]}" \
+                                --ok-button Select --cancel-button $back_btn_text 3>&1 1>&2 2>&3)
 
         local exitstatus=$?
 
@@ -597,7 +550,6 @@ module_options+=(
 function show_infobox() {
     export TERM=ansi
     local input
-    local BACKTITLE="$BACKTITLE"
     local -a buffer  # Declare buffer as an array
     if [ -p /dev/stdin ]; then
         while IFS= read -r line; do
@@ -837,8 +789,9 @@ module_options+=(
 # @description Install kernel headers
 #
 function are_headers_installed () {
-    if [[ -f /etc/armbian-release ]]; then
-        PKG_NAME="linux-headers-${BRANCH}-${LINUXFAMILY}";
+    if [[ -f /etc/fenix-release ]]; then
+        local kernel_version=$(uname -r | cut -f 1-2 -d.)
+        PKG_NAME="linux-headers-${VENDOR@L}-${kernel_version}";
     else
         PKG_NAME="linux-headers-$(uname -r | sed 's/'-$(dpkg --print-architecture)'//')";
     fi
@@ -849,21 +802,21 @@ function are_headers_installed () {
 
 
 module_options+=(
-["Headers_install,author"]="Joey Turner"
-["Headers_install,ref_link"]=""
-["Headers_install,feature"]="Headers_install"
-["Headers_install,desc"]="Install kernel headers"
-["Headers_install,example"]="is_package_manager_running"
-["Headers_install,status"]="Pending Review"
-["Headers_install,doc_link"]=""
+["headers_install,author"]="Joey Turner"
+["headers_install,ref_link"]=""
+["headers_install,feature"]="headers_install"
+["headers_install,desc"]="Install kernel headers"
+["headers_install,example"]="headers_install"
+["headers_install,status"]="Pending Review"
+["headers_install,doc_link"]=""
 )
 #
 # @description Install kernel headers
 #
-function Headers_install () {
+function headers_install () {
 	if ! is_package_manager_running; then
-	  if [[ -f /etc/armbian-release ]]; then
-	    INSTALL_PKG="linux-headers-${BRANCH}-${LINUXFAMILY}";
+	  if [[ -f /etc/fenix-release ]]; then
+	    INSTALL_PKG="linux-headers-${VENDOR@L}-${kernel_version}";
 	    else
 	    INSTALL_PKG="linux-headers-$(uname -r | sed 's/'-$(dpkg --print-architecture)'//')";
 	  fi
@@ -872,25 +825,23 @@ function Headers_install () {
 }
 
 module_options+=(
-["Headers_remove,author"]="Joey Turner"
-["Headers_remove,ref_link"]="https://github.com/armbian/config/blob/master/debian-config-jobs#L160"
-["Headers_remove,feature"]="Headers_remove"
-["Headers_remove,desc"]="Remove Linux headers"
-["Headers_remove,example"]="Headers_remove"
-["Headers_remove,status"]="Pending Review"
-["Headers_remove,doc_link"]="https://github.com/armbian/config/wiki#System"
+["headers_remove,author"]="Joey Turner"
+["headers_remove,ref_link"]="https://github.com/armbian/config/blob/master/debian-config-jobs#L160"
+["headers_remove,feature"]="headers_remove"
+["headers_remove,desc"]="Remove Linux headers"
+["headers_remove,example"]="headers_remove"
+["headers_remove,status"]="Pending Review"
+["headers_remove,doc_link"]="https://github.com/armbian/config/wiki#System"
 )
 #
 # @description Remove Linux headers
 #
-function Headers_remove () {
+function headers_remove () {
 	if ! is_package_manager_running; then
 		REMOVE_PKG="linux-headers-*"
 		if [[ -n $(dpkg -l | grep linux-headers) ]]; then
 			debconf-apt-progress -- apt-get -y purge ${REMOVE_PKG}
 			rm -rf /usr/src/linux-headers*
-		else
-			debconf-apt-progress -- apt-get -y install ${INSTALL_PKG}
 		fi
 		# cleanup
 		apt clean
