@@ -11,11 +11,12 @@ tput init
 trap "exit" INT TERM
 
 # Get the script directory
-script_dir="$(dirname "$0")" 
+script_dir="$(dirname "$0")"
+script_name="$(basename "$0")"
 
 # Define the lib directory one level up from the script directory
-lib_dir="$script_dir/../lib/armbian-configng"
-doc_dir="$script_dir/../share/doc/armbian-configng"
+lib_dir="$script_dir/../lib/${script_name}"
+doc_dir="$script_dir/../share/doc/${script_name}"
 json_file="$lib_dir/config.ng.jobs.json"
 
 #
@@ -50,7 +51,7 @@ echo "Loaded Network helpers..." #| show_infobox ;
 source "$lib_dir/config.ng.software.sh"
 echo "Loaded Software helpers..." #| show_infobox ;
 #
-# Loads the variables from beta armbian-config for runtime handling
+# Loads the variables for runtime handling
 
 source "$lib_dir/config.ng.runtime.sh" ;
 echo "Loaded Runtime conditions..." #| show_infobox ;
@@ -66,7 +67,7 @@ case "$1" in
           exit 0
      fi
 
-     echo "Usage:  armbian-configng --[option]
+     echo "Usage:  ${script_name} --[option]
      Options:
      --help [catagory]   Use [catagory] to filter specific menu options.
      --cmd  [option]     Run a command from the menu (simple)
@@ -74,9 +75,9 @@ case "$1" in
      --doc               Generate the README.md file 
 
      Examples:
-     armbian-configng --help [cmd||System||Software||Network||Localisation]
-     armbian-configng --cmd help 
-     armbian-configng --api help
+     ${script_name} --help [cmd||System||Software||Network||Localisation]
+     ${script_name} --cmd help 
+     ${script_name} --api help
 "
                exit 0
           ;;
@@ -165,7 +166,7 @@ case "$1" in
           ;;
      *)
           if [[ $EUID != 0 ]]; then
-               echo -e "error: Exiting \nTry: 'sudo armbian-config'\n or: 'armbian-config --help' for More info\n\n"
+               echo -e "error: Exiting \nTry: 'sudo ${script_name}'\n or: '${script_name} --help' for More info\n\n"
                exit 0
           fi
           ;;

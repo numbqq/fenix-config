@@ -19,9 +19,6 @@ function generate_readme() {
 
     # Get the current date
     local current_date=$(date)  
-    # setup doc folders
-    #mkdir -p "$script_dir/../share/doc/armbian-configng"
-   
 
 echo -e "Sorting data\nUpdating documentation" # current_date ;
 
@@ -35,7 +32,7 @@ Utility for configuring your board, adjusting services, and installing applicati
 
 To start the Armbian configuration utility, use the following command:
 ~~~
-sudo armbian-config
+sudo ${script_name}
 ~~~
 
 $(see_full_list)
@@ -65,7 +62,7 @@ Command line options.
 
 Use:
 ~~~
-armbian-config --help
+${script_name} --help
 ~~~
 
 Outputs:
@@ -78,7 +75,7 @@ Backward Compatible options.
 
 Use:
 ~~~
-armbian-config main=Help
+${script_name} main=Help
 ~~~
 
 Outputs:
@@ -142,7 +139,7 @@ Get Development and contribute:
 {
     git clone https://github.com/armbian/configng
     cd configng
-    ./armbian-configng --help
+    ./${script_name} --help
 }
 ~~~
 
@@ -550,7 +547,7 @@ function see_cli_legacy() {
         local script_name=$(basename "$0")
         cat << EOF 
 Legacy Options (Backward Compatible)
-Please use 'armbian-config --help' for more information.
+Please use '${script_name} --help' for more information.
 
 Usage:  $script_name main=[arguments] selection=[options]
 

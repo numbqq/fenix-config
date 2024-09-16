@@ -773,7 +773,7 @@
                 },
                 {
                     "id": "SW20",
-                    "description": "SWystem benchmaking and diagnostics",
+                    "description": "System benchmaking and diagnostics",
                     "command": [
                         "see_monitoring"
                     ],

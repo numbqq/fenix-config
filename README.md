@@ -1,12 +1,12 @@
 
 # Armbian Configuration Utility
-Updated: Tue Sep 10 08:13:32 PM CDT 2024
+Updated: Mon Sep 16 11:33:03 AM IST 2024
 
 Utility for configuring your board, adjusting services, and installing applications. It comes with Armbian by default.
 
 To start the Armbian configuration utility, use the following command:
 ~~~
-sudo armbian-config
+sudo armbian-configng
 ~~~
 
 - ## **System** 
@@ -16,21 +16,21 @@ sudo armbian-config
   - **S04** - Install Linux headers
   - **S05** - Remove Linux headers
   - **S06** - Install to internal storage
-  - **S07** - Manage SSH login options
-  - **S08** - Change shell system wide to BASH
-  - **S09** - Change shell system wide to ZSH
-  - **S10** - Switch to rolling release
-  - **S11** - Switch to stable release
+  - **S07.1** - Manage SSH login options
+  - **S17** - Change shell system wide to BASH
+  - **S18** - Change shell system wide to ZSH
+  - **S19** - Switch to rolling release
+  - **S20** - Switch to stable release
+  - **S21** - Enable read only filesystem
+  - **S22** - Disable read only filesystem
 
 
 - ## **Network** 
-  - **N01** - Configure network interfaces
-  - **N13** - Install Bluetooth support
-  - **N14** - Remove Bluetooth support
-  - **N15** - Bluetooth Discover
-  - **N16** - Toggle system IPv6/IPv4 internet protocol
-  - **N17** - Announce system in the network (Avahi)
-  - **N18** - Disable system announce in the network (Avahi)
+  - **N01.1** - Configure network interfaces
+  - **N15** - Install Bluetooth support
+  - **N16** - Remove Bluetooth support
+  - **N17** - Bluetooth Discover
+  - **N18** - Toggle system IPv6/IPv4 internet protocol
 
 
 - ## **Localisation** 
@@ -41,8 +41,11 @@ sudo armbian-config
 
 
 - ## **Software** 
-  - **I00** - Update Application Repository
-  - **I01** - System benchmaking and diagnostics
+  - **SW01.1** - Desktop Environments
+  - **SW01.2** - Network tools
+  - **SW01.3** - Development
+  - **SW19** - Update Application Repository
+  - **SW20** - System benchmaking and diagnostics
 
 
 - ## **Help** 
@@ -74,74 +77,89 @@ Command line options.
 
 Use:
 ~~~
-armbian-config --help
+armbian-configng --help
 ~~~
 
 Outputs:
 ~~~
-Usage:  armbian-configng [option] [arguments]
 
-    --help [catagory]  -  Display this help message.
-        Use [catagory] to filter specific menu options.
-
-System - System wide and admin settings
+  System - System wide and admin settings (aarch64)
     --cmd S01 - Enable Armbian kernel/firmware upgrades
     --cmd S02 - Disable Armbian kernel upgrades
     --cmd S03 - Edit the boot environment
     --cmd S04 - Install Linux headers
     --cmd S05 - Remove Linux headers
     --cmd S06 - Install to internal storage
-    --cmd S07 - Manage SSH login options
-    --cmd SS01 - Disable root login
-    --cmd SS02 - Enable root login
-    --cmd SS03 - Disable password login
-    --cmd SS04 - Enable password login
-    --cmd SS05 - Disable Public key authentication login
-    --cmd SS06 - Enable Public key authentication login
-    --cmd SS07 - Disable OTP authentication
-    --cmd SS08 - Enable OTP authentication
-    --cmd SS09 - Generate new OTP authentication QR code
-    --cmd SS10 - Show OTP authentication QR code
-    --cmd S08 - Change shell system wide to BASH
-    --cmd S09 - Change shell system wide to ZSH
-    --cmd S10 - Switch to rolling release
-    --cmd S11 - Switch to stable release
+    S07.1 - Manage SSH login options
+	--cmd S07 - Disable root login
+	--cmd S08 - Enable root login
+	--cmd S09 - Disable password login
+	--cmd S10 - Enable password login
+	--cmd S11 - Disable Public key authentication login
+	--cmd S12 - Enable Public key authentication login
+	--cmd S13 - Disable OTP authentication
+	--cmd S14 - Enable OTP authentication
+	--cmd S15 - Generate new OTP authentication QR code
+	--cmd S16 - Show OTP authentication QR code
+    --cmd S17 - Change shell system wide to BASH
+    --cmd S18 - Change shell system wide to ZSH
+    --cmd S19 - Switch to rolling release
+    --cmd S20 - Switch to stable release
+    --cmd S21 - Enable read only filesystem
+    --cmd S22 - Disable read only filesystem
 
-Network - Fixed and wireless network settings
-    --cmd N01 - Configure network interfaces
-    --cmd N02 - Wired
-    --cmd N06 - Show configuration
-    --cmd N07 - Enable DHCP on all interfaces
-    --cmd N08 - Set fixed IP address
-    --cmd N09 - Disable IPV6
-    --cmd N10 - Enable IPV6
-    --cmd N11 - Disable wired networking
-    --cmd N03 - Wireless
-    --cmd N25 - Show configuration
-    --cmd N26 - Disable wireless networking
-    --cmd N27 - Disable IPV6
-    --cmd N28 - Enable IPV6
-    --cmd N29 - Enable DHCP on wireless network interface
-    --cmd N04 - Show common configs
-    --cmd N05 - Apply common configs
-    --cmd N13 - Install Bluetooth support
-    --cmd N14 - Remove Bluetooth support
-    --cmd N15 - Bluetooth Discover
-    --cmd N16 - Toggle system IPv6/IPv4 internet protocol
-    --cmd N17 - Announce system in the network (Avahi)
-    --cmd N18 - Disable system announce in the network (Avahi)
+  Network - Fixed and wireless network settings (wlan0)
+    N01.1 - Configure network interfaces
+      N01.1.1 - Wired
+	--cmd N01 - Show configuration
+	--cmd N02 - Enable DHCP on all interfaces
+	--cmd N03 - Set fixed IP address
+	--cmd N04 - Disable IPV6
+	--cmd N05 - Enable IPV6
+	--cmd N06 - Disable wired networking
+      N01.1.2 - Wireless
+	--cmd N07 - Show configuration
+	--cmd N08 - Disable wireless networking
+	--cmd N09 - Disable IPV6
+	--cmd N10 - Enable IPV6
+	--cmd N11 - Enable DHCP on wireless network interface
+	--cmd N12 - Show common configs
+	--cmd N13 - Apply common configs
+	--cmd N14 - Display status
+    --cmd N15 - Install Bluetooth support
+    --cmd N16 - Remove Bluetooth support
+    --cmd N17 - Bluetooth Discover
+    --cmd N18 - Toggle system IPv6/IPv4 internet protocol
 
-Localisation - Localisation
+  Localisation - Localisation (en_US.UTF-8)
     --cmd L00 - Change Global timezone (WIP)
     --cmd L01 - Change Locales reconfigure the language and character set
     --cmd L02 - Change Keyboard layout
     --cmd L03 - Change APT mirrors
 
-Software - Run/Install 3rd party applications
-    --cmd I00 - Update Application Repository
-    --cmd I01 - System benchmaking and diagnostics
+  Software - Run/Install 3rd party applications (02:20:15)
+    SW01.1 - Desktop Environments
+	--cmd SW02 - Install XFCE desktop
+	--cmd SW03 - Install Gnome desktop
+	--cmd SW04 - Install i3-wm desktop
+	--cmd SW05 - Install Cinnamon desktop
+	--cmd SW06 - Install kde-neon desktop
+    SW01.2 - Network tools
+	--cmd SW08 - Install realtime console network usage monitor (nload)
+	--cmd SW09 - Remove realtime console network usage monitor (nload)
+	--cmd SW10 - Install bandwidth measuring tool (iperf3)
+	--cmd SW11 - Remove bandwidth measuring tool (iperf3)
+	--cmd SW12 - Install IP LAN monitor (iptraf-ng)
+	--cmd SW13 - Remove IP LAN monitor (iptraf-ng)
+	--cmd SW14 - Install hostname broadcast via mDNS (avahi-daemon)
+	--cmd SW15 - Remove hostname broadcast via mDNS (avahi-daemon)
+    SW01.3 - Development
+	--cmd SW17 - Install tools for cloning and managing repositories (git)
+	--cmd SW18 - Remove tools for cloning and managing repositories (git)
+    --cmd SW19 - Update Application Repository
+    --cmd SW20 - System benchmaking and diagnostics
 
-Help - About this app
+  Help - About this app
     --cmd H00 - About This system. (WIP)
     --cmd H02 - List of Config function(WIP)
 ~~~
@@ -151,13 +169,13 @@ Backward Compatible options.
 
 Use:
 ~~~
-armbian-config main=Help
+armbian-configng main=Help
 ~~~
 
 Outputs:
 ~~~
 Legacy Options (Backward Compatible)
-Please use 'armbian-config --help' for more information.
+Please use 'armbian-configng --help' for more information.
 
 Usage:  armbian-configng main=[arguments] selection=[options]
 
@@ -238,7 +256,7 @@ Jobs:
 armbian-install
 ~~~
 
-### S07
+### S07.1
 
 Manage SSH login options
 
@@ -248,7 +266,7 @@ Jobs:
 No commands available
 ~~~
 
-### S08
+### S17
 
 Change shell system wide to BASH
 
@@ -263,7 +281,7 @@ update_skel
 awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534 || $3 == 0) print $1}' /etc/passwd | xargs -L1 chsh -s $(grep /bash$ /etc/shells | tail -1)
 ~~~
 
-### S09
+### S18
 
 Change shell system wide to ZSH
 
@@ -278,7 +296,7 @@ update_skel
 awk -F'[/:]' '{if ($3 >= 1000 && $3 != 65534 || $3 == 0) print $1}' /etc/passwd | xargs -L1 chsh -s $(grep /zsh$ /etc/shells | tail -1)
 ~~~
 
-### S10
+### S19
 
 Switch to rolling release
 
@@ -288,7 +306,7 @@ Jobs:
 set_rolling
 ~~~
 
-### S11
+### S20
 
 Switch to stable release
 
@@ -298,7 +316,27 @@ Jobs:
 set_stable
 ~~~
 
-### N01
+### S21
+
+Enable read only filesystem
+
+Jobs:
+
+~~~
+manage_overlayfs enable
+~~~
+
+### S22
+
+Disable read only filesystem
+
+Jobs:
+
+~~~
+manage_overlayfs disable
+~~~
+
+### N01.1
 
 Configure network interfaces
 
@@ -308,7 +346,7 @@ Jobs:
 No commands available
 ~~~
 
-### N13
+### N15
 
 Install Bluetooth support
 
@@ -320,7 +358,7 @@ debconf-apt-progress -- apt-get -y install bluetooth bluez bluez-tools
 check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y --no-install-recommends install pulseaudio-module-bluetooth blueman
 ~~~
 
-### N14
+### N16
 
 Remove Bluetooth support
 
@@ -333,7 +371,7 @@ check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y remove pul
 debconf-apt-progress -- apt -y -qq autoremove
 ~~~
 
-### N15
+### N17
 
 Bluetooth Discover
 
@@ -343,7 +381,7 @@ Jobs:
 connect_bt_interface
 ~~~
 
-### N16
+### N18
 
 Toggle system IPv6/IPv4 internet protocol
 
@@ -351,32 +389,6 @@ Jobs:
 
 ~~~
 toggle_ipv6 | show_infobox
-~~~
-
-### N17
-
-Announce system in the network (Avahi)
-
-Jobs:
-
-~~~
-check_if_installed avahi-daemon
-debconf-apt-progress -- apt-get -y install avahi-daemon libnss-mdns
-cp /usr/share/doc/avahi-daemon/examples/sftp-ssh.service /etc/avahi/services/
-cp /usr/share/doc/avahi-daemon/examples/ssh.service /etc/avahi/services/
-service avahi-daemon restart
-~~~
-
-### N18
-
-Disable system announce in the network (Avahi)
-
-Jobs:
-
-~~~
-check_if_installed avahi-daemon
-systemctl stop avahi-daemon avahi-daemon.socket
-debconf-apt-progress -- apt-get -y purge avahi-daemon
 ~~~
 
 ### L00
@@ -422,7 +434,37 @@ Jobs:
 get_user_continue "This is only a frontend test" process_input
 ~~~
 
-### I00
+### SW01.1
+
+Desktop Environments
+
+Jobs:
+
+~~~
+No commands available
+~~~
+
+### SW01.2
+
+Network tools
+
+Jobs:
+
+~~~
+No commands available
+~~~
+
+### SW01.3
+
+Development
+
+Jobs:
+
+~~~
+No commands available
+~~~
+
+### SW19
 
 Update Application Repository
 
@@ -432,7 +474,7 @@ Jobs:
 debconf-apt-progress -- apt update
 ~~~
 
-### I01
+### SW20
 
 System benchmaking and diagnostics
 
@@ -479,6 +521,7 @@ These helper functions facilitate various operations related to job management, 
 | Run time variables Migrated procedures from Armbian config. | set_runtime_variables | Igor Pecovnik 
 | Set Armbian to rolling release | set_rolling | Tearran 
 | Generate this markdown table of all module_options | see_function_table_md | Joey Turner 
+| Set Armbian root filesystem to read only | manage_overlayfs enable|disable | igorpecovnik 
 | Display a menu from pipe | show_menu <<< armbianmonitor -h  ;  | Joey Turner 
 | Build the main menu from a object | generate_top_menu 'json_data' | Joey Turner 
 | Migrated procedures from Armbian config. | is_package_manager_running | Igor Pecovnik 
@@ -507,6 +550,7 @@ These helper functions facilitate various operations related to job management, 
 | Set up a WiFi hotspot on the device | hotspot_setup | Joey Turner 
 | Toggle IPv6 on or off | toggle_ipv6 | Joey Turner 
 | Generate JSON-like object file. | generate_json | Joey Turner 
+| Install DE | install_de | Igor Pecovnik 
 | Change the background color of the terminal or dialog box | set_colors 0-7 | Joey Turner 
 | Serve the edit and debug server. | serve_doc | Joey Turner 
 | Update JSON data with system information | update_json_data | Joey Turner 
