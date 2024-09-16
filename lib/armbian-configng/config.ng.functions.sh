@@ -607,7 +607,42 @@ show_menu(){
 	    exit 0
 	fi 
 
-	}
+}
+
+
+module_options+=(
+["generic_select,author"]="Gunjan Gupta"
+["generic_select,ref_link"]=""
+["generic_select,feature"]="generic_select"
+["generic_select,desc"]="Display a menu a given list of options with a provided prompt"
+["generic_select,example"]="generic_select \"true false\" \"Select an option\""
+["generic_select,doc_link"]=""
+["generic_select,status"]="Active"
+)
+#
+#  Display a menu a given list of options with a provided prompt
+#
+function generic_select()
+{
+	IFS=$' '
+	PARAMETER=($1)
+	local LIST=()
+	for i in "${PARAMETER[@]}"
+	do
+		if [[ -n $3 ]]; then
+			[[ ${i[0]} -ge $3 ]] && \
+			LIST+=( "${i[0]//[[:blank:]]/}" "" )
+		else
+			LIST+=( "${i[0]//[[:blank:]]/}" "" )
+		fi
+	done
+	LIST_LENGTH=$((${#LIST[@]}/2));
+	if [ "$LIST_LENGTH" -eq 1 ]; then
+		PARAMETER=${LIST[0]}
+	else
+		PARAMETER=$($DIALOG --title "$2" --menu "" 0 0 9 "${LIST[@]}" 3>&1 1>&2 2>&3)
+	fi
+}
 
 
 module_options+=(

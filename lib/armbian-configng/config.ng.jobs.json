@@ -238,6 +238,79 @@
                     "src_reference": "",
                     "author": "Igor Pecovnik",
                     "condition": "command -v overlayroot-chroot > /dev/null 2>&1 && findmnt -k /media/root-ro | tail -1 | grep -w /media/root-ro > /dev/null 2>&1"
+                },
+                {
+                    "id": "S10",
+                    "description": "Set CPU speed and governor.",
+                    "sub": [
+                        {
+                            "id": "S1001",
+                            "description": "Disable CPU frequency utilities",
+                            "command": [
+                                "sed -i \"s/ENABLE=.*/ENABLE=false/\" /etc/default/cpufrequtils",
+                                "systemctl restart cpufrequtils"
+                            ],
+                            "status": "Active",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
+                        },
+                        {
+                            "id": "S1002",
+                            "description": "Enable CPU frequency utilities",
+                            "command": [
+                                "sed -i \"s/ENABLE=.*/ENABLE=false/\" /etc/default/cpufrequtils",
+                                "systemctl restart cpufrequtils"
+                            ],
+                            "status": "Active",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^ENABLE=false' /etc/default/cpufrequtils"
+                        },
+                        {
+                            "id": "S1003",
+                            "description": "Set minimum CPU speed",
+                            "command": [
+                                "set_cpufreq_option MIN_SPEED"
+                            ],
+                            "status": "Active",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
+                        },
+                        {
+                            "id": "S1004",
+                            "description": "Set maximum CPU speed",
+                            "command": [
+                                "set_cpufreq_option MAX_SPEED"
+                            ],
+                            "status": "Active",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
+                        },
+                        {
+                            "id": "S1005",
+                            "description": "Set CPU scaling governor",
+                            "command": [
+                                "set_cpufreq_option GOVERNOR"
+                            ],
+                            "status": "Active",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
+                        }
+                    ],
+                    "status": "Active",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "Gunjan Gupta",
+                    "condition": "check_if_installed cpufrequtils"
                 }
             ]
         },
