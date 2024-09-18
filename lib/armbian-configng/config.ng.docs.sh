@@ -340,7 +340,7 @@ do
     echo -e "| "$cat" | ID  | Description | Documents | Status |"
     echo -e "|:------ | :-- | :---------- | --------: | ------:|"
 
-    sub_items=$(jq -r ".menu[$i].sub | length" "$json_file")
+    sub_items=$(jq -r ".menu[$i].sub? | length" "$json_file")
 
     for (( j=0; j<$sub_items; j++ ))
     do
@@ -376,7 +376,7 @@ function see_full_list() {
         echo -e "- ## **$cat** "
         #echo   "$description"
 
-        sub_items=$(jq -r ".menu[$i].sub | length" "$json_file")
+        sub_items=$(jq -r ".menu[$i].sub? | length" "$json_file")
 
         for (( j=0; j<$sub_items; j++ ))
         do
@@ -451,7 +451,7 @@ function see_jq_menu_list() {
 
 jq -r '
     .menu[] | 
-    .sub[] | 
+    .sub? // [] | .[] |
     "### " + .id + "\n\n" + 
     (.description // "No description available") + "\n\nJobs:\n\n~~~\n" + 
     ((.command // ["No commands available"]) | join("\n")) +  
