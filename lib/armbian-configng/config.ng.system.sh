@@ -174,7 +174,7 @@ function manage_overlayfs () {
 	fi
 
 	$DIALOG --title " Reboot required " --yes-button "Reboot" \
-		--no-button "Cancel" --yesno "\nA reboot is required to apply the changes. Shall we reboot now?" 7 34
+		--no-button "Cancel" --yesno "\nA reboot is required to apply the changes. Shall we reboot now?" 10 80
 
 	if [[ $? = 0 ]]; then
 		reboot
@@ -303,12 +303,10 @@ function manage_dtoverlays () {
 			1)
 				if [[ "$changes" == "true" ]]; then
 					$DIALOG --title " Reboot required " --yes-button "Reboot" \
-						--no-button "Cancel" --yesno "A reboot is required to apply the changes. Shall we reboot now?" 7 34
+						--no-button "Cancel" --yesno "A reboot is required to apply the changes. Shall we reboot now?" 10 80
 					if [[ $? = 0 ]]; then
 						reboot
 					fi
-
-					sleep 30
 				fi
 				break
 				;;
