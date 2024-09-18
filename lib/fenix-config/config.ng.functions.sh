@@ -207,9 +207,9 @@ module_options+=(
 #
 fw_manipulate() {
 
-	function=$1
+    local function=$1
 
-	SUPPORTED_PACKAGES=(
+	supported_packages=(
 	    "linux-u-boot-${BOARD@L}-vendor"
         "linux-u-boot-${BOARD@L}-mainline"
         "linux-image-${VENDOR@L}-${kernel_version}"
@@ -224,37 +224,40 @@ fw_manipulate() {
         "linux-gpu-mali-fbdev"
 	)
 
-	if [[ "${function}" == reinstall ]]; then
-		debconf-apt-progress -- apt-get update
+	# reinstall headers only if they were previously installed
+	if are_headers_installed; then
+		local armbian_packages+="linux-headers-${BRANCH}-${LINUXFAMILY}"
 	fi
 
-	PACKAGES=""
-	for PACKAGE in "${SUPPORTED_PACKAGES[@]}"
+	packages=""
+	for pkg in "${supported_packages[@]}"
 	do
 			if [[ "${function}" == reinstall ]]; then
-				apt search $PACKAGE 2>/dev/null | grep "^$PACKAGE" >/dev/null
+				apt search $pkg 2>/dev/null | grep "^$pkg" >/dev/null
 				if [[ $? -eq 0 ]]; then
-                    PACKAGES+="$PACKAGE ";
+                    packages+="$pkg ";
                 fi
 			else
-				if check_if_installed $PACKAGE; then
-				    PACKAGES+="$PACKAGE "
+				if check_if_installed $pkg; then
+				    packages+="$pkg "
 				fi
 			fi
 	done
 
-	case $function in
-		unhold)            apt-mark unhold ${PACKAGES} | show_infobox ;;
-		hold)              apt-mark hold ${PACKAGES} | show_infobox ;;
-		reinstall)
-					debconf-apt-progress -- apt-get -y --download-only install ${PACKAGES}
-					debconf-apt-progress -- apt-get -y purge ${PACKAGES}
-					debconf-apt-progress -- apt-get -y install ${PACKAGES}
-					debconf-apt-progress -- apt-get -y autoremove
-		;;
-		*) return ;;
-	esac
-
+	for pkg in "${packages[@]}"
+	do
+		case $function in
+			unhold)            apt-mark unhold ${pkg} | show_infobox ;;
+			hold)              apt-mark hold ${pkg} | show_infobox ;;
+			reinstall)
+						apt_install_wrapper apt-get -y --download-only --allow-change-held-packages --allow-downgrades install "${pkg}"
+						apt_install_wrapper apt-get -y purge "${pkg}"
+						apt_install_wrapper apt-get -y --allow-change-held-packages --allow-downgrades install "${pkg}"
+						apt_install_wrapper apt-get -y autoremove
+			;;
+			*) return ;;
+		esac
+	done
 }
 
 
@@ -434,18 +437,18 @@ function execute_command() {
 
     # Extract commands
     local commands=$(jq -r --arg id "$id" '
-      .menu[] | 
-      .. | 
-      objects | 
-      select(.id == $id) | 
+      .menu[] |
+      .. |
+      objects |
+      select(.id == $id) |
       .command[]?' "$json_file")
 
     # Check if a prompt exists
     local prompt=$(jq -r --arg id "$id" '
-      .menu[] | 
-      .. | 
-      objects | 
-      select(.id == $id) | 
+      .menu[] |
+      .. |
+      objects |
+      select(.id == $id) |
       .prompt?' "$json_file")
 
     # If a prompt exists, display it and wait for user confirmation
@@ -541,7 +544,7 @@ show_menu(){
 
     # Get the input and convert it into an array of options
     inpu_raw=$(cat)
-    # Remove the lines before -h 
+    # Remove the lines before -h
 	input=$(echo "$inpu_raw" | sed 's/-\([a-zA-Z]\)/\1/' | grep '^  [a-zA-Z] ' | grep -v '\[')
     options=()
     while read -r line; do
@@ -558,7 +561,7 @@ show_menu(){
 	    echo "$choice"
 	else
 	    exit 0
-	fi 
+	fi
 
 }
 

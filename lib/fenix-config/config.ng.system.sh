@@ -38,9 +38,9 @@ function install_de (){
 	# get user who executed this script
 	if [ $SUDO_USER ]; then local user=$SUDO_USER; else local user=`whoami`; fi
 
-	#debconf-apt-progress -- 
+	#debconf-apt-progress --
 	apt-get update
-	#debconf-apt-progress -- 
+	#debconf-apt-progress --
 	apt-get -o Dpkg::Options::="--force-confold" -y --install-recommends install armbian-${DISTROID}-desktop-$1 # armbian-bsp-desktop-${BOARD}-${BRANCH}
 
 	# clean apt cache
@@ -201,7 +201,6 @@ function manage_overlayfs () {
 		reboot
 	fi
 }
-
 
 module_options+=(
 ["set_cpufreq_option,author"]="Gunjan Gupta"
