@@ -380,15 +380,15 @@
       "description": "Fixed and wireless network settings",
       "sub": [
         {
-          "id": "N01.1",
+          "id": "N01",
           "description": "Configure network interfaces",
           "sub": [
             {
-              "id": "N01.1.1",
+              "id": "N0101",
               "description": "Wired",
               "sub": [
                 {
-                  "id": "N01",
+                  "id": "N010101",
                   "description": "Show configuration",
                   "command": [
                     "netplan_wrapper \"show_message\" \"\" \"\" \"ethernets\""
@@ -400,7 +400,7 @@
                   "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
                 },
                 {
-                  "id": "N02",
+                  "id": "N010102",
                   "description": "Enable DHCP on all interfaces",
                   "command": [
                     "netplan_wrapper \"dhcp_all_wired_interfaces\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""
@@ -410,7 +410,7 @@
                   "condition": "[ ! -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
                 },
                 {
-                  "id": "N03",
+                  "id": "N010103",
                   "description": "Set fixed IP address",
                   "command": [
                     " netplan_wrapper \"set_ip\" \"true\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""
@@ -422,7 +422,7 @@
                   "condition": ""
                 },
                 {
-                  "id": "N04",
+                  "id": "N010104",
                   "description": "Disable IPV6",
                   "command": [
                     " netplan_wrapper \"disable_ipv6\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""
@@ -434,7 +434,7 @@
                   "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
                 },
                 {
-                  "id": "N05",
+                  "id": "N010105",
                   "description": "Enable IPV6",
                   "command": [
                     " netplan_wrapper \"enable_ipv6\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""
@@ -446,7 +446,7 @@
                   "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
                 },
                 {
-                  "id": "N06",
+                  "id": "N010106",
                   "description": "Disable wired networking",
                   "command": [
                     "rm -f /etc/netplan/10-dhcp-all-interfaces.yaml /etc/netplan/30-*static-interfaces.yaml"
@@ -458,11 +458,11 @@
               ]
             },
             {
-              "id": "N01.1.2",
+              "id": "N0102",
               "description": "Wireless",
               "sub": [
                 {
-                  "id": "N07",
+                  "id": "N010201",
                   "description": "Show configuration",
                   "command": [
                     "netplan_wrapper \"show_message\" \"\" \"\" \"wifis\""
@@ -472,7 +472,7 @@
                   "author": "Igor Pecovnik"
                 },
                 {
-                  "id": "N08",
+                  "id": "N010202",
                   "description": "Disable wireless networking",
                   "command": [
                     "rm -f /etc/netplan/20-dhcp-wlan-interface.yaml"
@@ -482,7 +482,7 @@
                   "author": "Igor Pecovnik"
                 },
                 {
-                  "id": "N09",
+                  "id": "N010203",
                   "description": "Disable IPV6",
                   "command": [
                     " netplan_wrapper \"disable_ipv6\" \"false\" \"20-dhcp-wlan-interface\" \"wifis\" \"networkd\""
@@ -492,7 +492,7 @@
                   "author": "Igor Pecovnik"
                 },
                 {
-                  "id": "N10",
+                  "id": "N010204",
                   "description": "Enable IPV6",
                   "command": [
                     " netplan_wrapper \"enable_ipv6\" \"false\" \"20-dhcp-wlan-interface\" \"wifis\" \"networkd\""
@@ -502,7 +502,7 @@
                   "author": "Igor Pecovnik"
                 },
                 {
-                  "id": "N11",
+                  "id": "N010205",
                   "description": "Enable DHCP on wireless network interface",
                   "command": [
                     "wifi_connect"
@@ -514,7 +514,7 @@
               ]
             },
             {
-              "id": "N12",
+              "id": "N0103",
               "description": "Show common configs",
               "command": [
                 "show_message <<< \"$(sudo netplan get all)\""
@@ -526,7 +526,7 @@
               "condition": ""
             },
             {
-              "id": "N13",
+              "id": "N0104",
               "description": "Apply common configs",
               "prompt": "This will apply new network configuration\n\nwould you like to continue?",
               "command": [
@@ -539,7 +539,7 @@
               "condition": ""
             },
             {
-              "id": "N14",
+              "id": "N0105",
               "description": "Display status",
               "command": [
                 "show_message <<< \"$(sudo netplan status)\""
@@ -550,10 +550,23 @@
               "author": "Igor Pecovnik",
               "condition": ""
             }
-          ]
+          ],
+          "condition": "check_if_installed netplan.io"
         },
         {
-          "id": "N15",
+          "id": "N02",
+          "description": "Configure network interfaces",
+          "command": [
+            "nmtui-connect"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "check_if_installed network-manager && ! check_if_installed netplan.io"
+        },
+        {
+          "id": "N03",
           "description": "Install Bluetooth support",
           "command": [
             "see_current_apt ",
@@ -567,7 +580,7 @@
           "condition": "! check_if_installed bluetooth && ! check_if_installed bluez && ! check_if_installed bluez-tools"
         },
         {
-          "id": "N16",
+          "id": "N04",
           "description": "Remove Bluetooth support",
           "command": [
             "see_current_apt ",
@@ -582,7 +595,7 @@
           "condition": "check_if_installed bluetooth || check_if_installed bluez || check_if_installed bluez-tools"
         },
         {
-          "id": "N17",
+          "id": "N05",
           "description": "Bluetooth Discover",
           "prompt": "This will enable bluetooth and discover devices\n\nWould you like to continue?",
           "command": [
@@ -595,7 +608,7 @@
           "condition": "check_if_installed bluetooth || check_if_installed bluez || check_if_installed bluez-tools"
         },
         {
-          "id": "N18",
+          "id": "N06",
           "description": "Toggle system IPv6/IPv4 internet protocol",
           "prompt": "This will toggle your internet protocol\nWould you like to continue?",
           "command": [
@@ -613,8 +626,8 @@
       "description": "Localisation",
       "sub": [
         {
-          "id": "L00",
-          "description": "Change Global timezone (WIP)",
+          "id": "L01",
+          "description": "Change Global timezone",
           "command": [
             "dpkg-reconfigure tzdata"
           ],
@@ -624,7 +637,7 @@
           "author": ""
         },
         {
-          "id": "L01",
+          "id": "L02",
           "description": "Change Locales reconfigure the language and character set",
           "command": [
             "dpkg-reconfigure locales",
@@ -637,7 +650,7 @@
           "author": ""
         },
         {
-          "id": "L02",
+          "id": "L03",
           "description": "Change Keyboard layout",
           "command": [
             "dpkg-reconfigure keyboard-configuration ; setupcon ",
@@ -646,17 +659,6 @@
           "status": "Active",
           "doc_link": "",
           "src_reference": "",
-          "author": ""
-        },
-        {
-          "id": "L03",
-          "description": "Change APT mirrors",
-          "prompt": "This will change the APT mirrors\nWould you like to continue?",
-          "command": [
-            "get_user_continue \"This is only a frontend test\" process_input"
-          ],
-          "disabled": true,
-          "status": "Active",
           "author": ""
         }
       ]
