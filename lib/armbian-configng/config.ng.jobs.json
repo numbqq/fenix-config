@@ -1,873 +1,935 @@
 {
-    "menu": [
+  "menu": [
+    {
+      "id": "System",
+      "description": "System wide and admin settings",
+      "sub": [
         {
-            "id": "System",
-            "description": "System wide and admin settings",
-            "sub": [
-                {
-                    "id": "S01",
-                    "description": "Enable Kernel/BSP upgrades",
-                    "prompt": "This will enable kernel and BSP package upgrades?\nWould you like to continue?",
-                    "command": [
-                        "fw_manipulate unhold"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "",
-                    "condition": "[[ -n \"$(apt-mark showhold)\" ]]"
-                },
-                {
-                    "id": "S02",
-                    "description": "Disable Kernel/BSP upgrades",
-                    "prompt": "Disable kernel and BSP package upgrades\nWould you like to continue?",
-                    "command": [
-                        "fw_manipulate hold"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "",
-                    "condition": "[[ -z \"$(apt-mark showhold)\" ]]"
-                },
-                {
-                    "id": "S03",
-                    "description": "Edit the boot environment",
-                    "prompt": "This will open /boot/uEnv.txt file for editing. Would you like to continue?",
-                    "command": [
-                        "nano /boot/uEnv.txt"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": ""
-                },
-                {
-                    "id": "S04",
-                    "description": "Install Linux headers",
-                    "command": [
-                        "headers_install"
-                    ],
-                    "status": "Pending Review",
-                    "doc_link": "https://github.com/armbian/config/wiki#System",
-                    "src_reference": "https://github.com/armbian/config/blob/master/debian-config-jobs#L160",
-                    "author": "https://github.com/Tearran",
-                    "condition": "! are_headers_installed"
-                },
-                {
-                    "id": "S05",
-                    "description": "Remove Linux headers",
-                    "command": [
-                        "headers_remove"
-                    ],
-                    "status": "Pending Review",
-                    "doc_link": "https://github.com/armbian/config/wiki#System",
-                    "src_reference": "https://github.com/armbian/config/blob/master/debian-config-jobs#L160",
-                    "author": "https://github.com/Tearran",
-                    "condition": "are_headers_installed"
-                },
-                {
-                    "id": "S06",
-                    "description": "Install to another storage",
-                    "command": [
-                        "/usr/sbin/emmc-install"
-                    ],
-                    "status": "Pending Review",
-                    "doc_link": "https://github.com/armbian/config/wiki#System",
-                    "src_reference": "",
-                    "author": "https://github.com/igorpecovnik",
-                    "condition": "[[ -e /usr/sbin/emmc-install ]]"
-                },
-                {
-                    "id": "S07",
-                    "description": "Manage SSH login options",
-                    "sub": [
-                        {
-                            "id": "S0701",
-                            "description": "Disable root login",
-                            "command": [
-                                "sed -i \"s|^#\\?PermitRootLogin.*|PermitRootLogin no|\" /etc/ssh/sshd_config",
-                                "systemctl restart sshd.service"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q '^PermitRootLogin yes'  /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0702",
-                            "description": "Enable root login",
-                            "command": [
-                                "sed -i \"s/^#\\?PermitRootLogin.*/PermitRootLogin yes/\" /etc/ssh/sshd_config" ,
-                                "systemctl restart sshd.service"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q '^PermitRootLogin no' /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0703",
-                            "description": "Disable password login",
-                            "command": [
-                                "sed -i \"s/^#\\?PasswordAuthentication.*/PasswordAuthentication no/\" /etc/ssh/sshd_config" ,
-                                "systemctl restart sshd.service"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q 'PasswordAuthentication yes' /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0704",
-                            "description": "Enable password login",
-                            "command": [
-                                "sed -i \"s/^#\\?PasswordAuthentication.*/PasswordAuthentication yes/\" /etc/ssh/sshd_config" ,
-                                "systemctl restart sshd.service"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q 'PasswordAuthentication no' /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0705",
-                            "description": "Disable Public key authentication login",
-                            "command": [
-                                "sed -i \"s/^#\\?PubkeyAuthentication.*/PubkeyAuthentication no/\" /etc/ssh/sshd_config" ,
-                                "systemctl restart sshd.service"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q 'PubkeyAuthentication yes' /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0706",
-                            "description": "Enable Public key authentication login",
-                            "command": [
-                                "sed -i \"s/^#\\?PubkeyAuthentication.*/PubkeyAuthentication yes/\" /etc/ssh/sshd_config" ,
-                                "systemctl restart sshd.service"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q 'PubkeyAuthentication no' /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0707",
-                            "description": "Disable OTP authentication",
-                            "command": [
-                                "clear",
-                                "! check_if_installed libpam-google-authenticator && ! check_if_installed qrencode || debconf-apt-progress -- apt-get -y purge libpam-google-authenticator qrencode",
-                                "sed -i \"s/^#\\?ChallengeResponseAuthentication.*/ChallengeResponseAuthentication no/\" /etc/ssh/sshd_config || sed -i \"0,/KbdInteractiveAuthentication/s//ChallengeResponseAuthentication yes/\" /etc/ssh/sshd_config" ,
-                                "sed -i '/^auth required pam_google_authenticator.so nullok/ d' /etc/pam.d/sshd",
-                                "systemctl restart sshd.service"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q 'ChallengeResponseAuthentication yes' /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0708",
-                            "description": "Enable OTP authentication",
-                            "command": [
-                                "check_if_installed libpam-google-authenticator || debconf-apt-progress -- apt-get -y install libpam-google-authenticator",
-                                "check_if_installed qrencode || debconf-apt-progress -- apt-get -y install qrencode",
-                                "sed -i \"s/^#\\?ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/\" /etc/ssh/sshd_config",
-                                "sed -i $'/KbdInteractiveAuthentication/{iChallengeResponseAuthentication yes\\n:a;n;ba}' /etc/ssh/sshd_config || sed -n -i '/password updating/{p;:a;N;/@include common-password/!ba;s/.*\\n/auth required pam_google_authenticator.so nullok\\nauth required pam_permit.so\\n/};p' /etc/pam.d/sshd",
-                                "[ ! -f /root/.google_authenticator ] && qr_code generate",
-                                "systemctl restart sshd.service"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "! check_if_installed libpam-google-authenticator || ! check_if_installed qrencode || grep -q '^ChallengeResponseAuthentication no' /etc/ssh/sshd_config || ! grep -q 'ChallengeResponseAuthentication' /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0709",
-                            "description": "Generate new OTP authentication QR code",
-                            "command": [
-                                "qr_code generate"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q '^ChallengeResponseAuthentication yes' /etc/ssh/sshd_config"
-                        },
-                        {
-                            "id": "S0710",
-                            "description": "Show OTP authentication QR code",
-                            "command": ["qr_code"],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "Igor Pecovnik",
-                            "condition": "grep -q '^ChallengeResponseAuthentication yes' /etc/ssh/sshd_config && [ -f /root/.google_authenticator ]"
-                        }
-                    ]
-                },
-                {
-                    "id": "S08",
-                    "description": "Enable read only filesystem",
-                    "prompt": "This will enable Armbian read-only filesystem. Changes will be reflected after reboot.\n\nWould you like to continue?",
-                    "command": [ "manage_overlayfs enable" ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "Igor Pecovnik",
-                    "condition": "modinfo overlay > /dev/null 2>&1 && [[ -z $(findmnt -k /media/root-ro | tail -1) ]] && [[ \"${DISTRO}\"=Ubuntu ]]"
-                },
-                {
-                    "id": "S09",
-                    "description": "Disable read only filesystem",
-                    "prompt": "This will disable Armbian read-only filesystem. Changes will be reflected after reboot.\n\nWould you like to continue?",
-                    "command": [ "manage_overlayfs disable" ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "Igor Pecovnik",
-                    "condition": "command -v overlayroot-chroot > /dev/null 2>&1 && findmnt -k /media/root-ro | tail -1 | grep -w /media/root-ro > /dev/null 2>&1"
-                },
-                {
-                    "id": "S10",
-                    "description": "Set CPU speed and governor",
-                    "sub": [
-                        {
-                            "id": "S1001",
-                            "description": "Disable CPU frequency utilities",
-                            "command": [
-                                "sed -i \"s/ENABLE=.*/ENABLE=false/\" /etc/default/cpufrequtils",
-                                "systemctl restart cpufrequtils"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
-                        },
-                        {
-                            "id": "S1002",
-                            "description": "Enable CPU frequency utilities",
-                            "command": [
-                                "sed -i \"s/ENABLE=.*/ENABLE=false/\" /etc/default/cpufrequtils",
-                                "systemctl restart cpufrequtils"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q '^ENABLE=false' /etc/default/cpufrequtils"
-                        },
-                        {
-                            "id": "S1003",
-                            "description": "Set minimum CPU speed",
-                            "command": [
-                                "set_cpufreq_option MIN_SPEED"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
-                        },
-                        {
-                            "id": "S1004",
-                            "description": "Set maximum CPU speed",
-                            "command": [
-                                "set_cpufreq_option MAX_SPEED"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
-                        },
-                        {
-                            "id": "S1005",
-                            "description": "Set CPU scaling governor",
-                            "command": [
-                                "set_cpufreq_option GOVERNOR"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
-                        }
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "Gunjan Gupta",
-                    "condition": "check_if_installed cpufrequtils"
-                },
-                {
-                    "id": "S11",
-                    "description": "Set fan control options",
-                    "sub": [
-                        {
-                            "id": "S1101",
-                            "description": "Set fan mode",
-                            "command": [
-                                "set_fan_controls mode"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": ""
-                        },
-                        {
-                            "id": "S1102",
-                            "description": "Set fan level",
-                            "command": [
-                                "set_fan_controls level"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": ""
-                        },
-                        {
-                            "id": "S1103",
-                            "description": "Show current fan status",
-                            "command": [
-                                "/usr/local/bin/fan.sh mode | show_message"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": ""
-                        }
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "Gunjan Gupta",
-                    "condition": "[ -e /usr/local/bin/fan.sh ] && [ -e /sys/class/fan/mode ]  && [ -e /sys/class/fan/level ]"
-                },
-                {
-                    "id": "S12",
-                    "description": "Manage device tree overlays",
-                    "command": [
-                        "manage_dtoverlays"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "Gunjan Gupta"
-                }
-            ]
+          "id": "S01",
+          "description": "Enable Kernel/BSP upgrades",
+          "prompt": "This will enable kernel and BSP package upgrades?\nWould you like to continue?",
+          "command": [
+            "fw_manipulate unhold"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "[[ -n \"$(apt-mark showhold)\" ]]"
         },
         {
-            "id": "Network",
-            "description": "Fixed and wireless network settings",
-            "sub": [
-                {
-                    "id": "N01.1",
-                    "description": "Configure network interfaces",
-                    "sub": [
-                            {
-                                "id": "N01.1.1",
-                                "description": "Wired",
-                                "sub": [
-                                    {
-                                        "id": "N01",
-                                        "description": "Show configuration",
-                                        "command": [ "netplan_wrapper \"show_message\" \"\" \"\" \"ethernets\"" ],
-                                        "status": "Active",
-                                        "doc_link": "",
-                                        "src_reference": "",
-                                        "author": "Igor Pecovnik",
-                                        "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
-                                    },
-                                    {
-                                        "id": "N02",
-                                        "description": "Enable DHCP on all interfaces",
-                                        "command": [ "netplan_wrapper \"dhcp_all_wired_interfaces\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\"" ],
-                                        "status": "Active",
-                                        "author": "Igor Pecovnik",
-                                        "condition": "[ ! -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
-                                    },
-                                    {
-                                        "id": "N03",
-                                        "description": "Set fixed IP address",
-                                        "command": [" netplan_wrapper \"set_ip\" \"true\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""],
-                                        "status": "Active",
-                                        "doc_link": "",
-                                        "src_reference": "",
-                                        "author": "Igor Pecovnik",
-                                        "condition": ""
-                                    },
-                                    {
-                                        "id": "N04",
-                                        "description": "Disable IPV6",
-                                        "command": [" netplan_wrapper \"disable_ipv6\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""],
-                                        "status": "Pending Review",
-                                        "doc_link": "",
-                                        "src_reference": "",
-                                        "author": "Igor Pecovnik",
-                                        "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
-                                    },
-                                    {
-                                        "id": "N05",
-                                        "description": "Enable IPV6",
-                                        "command": [" netplan_wrapper \"enable_ipv6\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""],
-                                        "status": "Pending Review",
-                                        "doc_link": "",
-                                        "src_reference": "",
-                                        "author": "Igor Pecovnik",
-                                        "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
-                                    },
-                                    {
-                                        "id": "N06",
-                                        "description": "Disable wired networking",                                    
-                                        "command": [ "rm -f /etc/netplan/10-dhcp-all-interfaces.yaml /etc/netplan/30-*static-interfaces.yaml" ],
-                                        "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]",
-                                        "status": "Active",
-                                        "author": "Igor Pecovnik"
-                                    }
-                                ]
-                            },
-                            {
-                                "id": "N01.1.2",
-                                "description": "Wireless",
-                                "sub": [
-                                    {
-                                        "id": "N07",
-                                        "description": "Show configuration",
-                                        "command": [ "netplan_wrapper \"show_message\" \"\" \"\" \"wifis\"" ],
-                                        "condition": "[ -f /etc/netplan/20-dhcp-wlan-interface.yaml ]",
-                                        "status": "Active",
-                                        "author": "Igor Pecovnik"
-                                    },
-                                    {
-                                        "id": "N08",
-                                        "description": "Disable wireless networking",
-                                        "command": [ "rm -f /etc/netplan/20-dhcp-wlan-interface.yaml" ],
-                                        "condition": "[ -f /etc/netplan/20-dhcp-wlan-interface.yaml ]",
-                                        "status": "Active",
-                                        "author": "Igor Pecovnik"
-                                    },
-                                    {
-                                        "id": "N09",
-                                        "description": "Disable IPV6",
-                                        "command": [" netplan_wrapper \"disable_ipv6\" \"false\" \"20-dhcp-wlan-interface\" \"wifis\" \"networkd\""],
-                                        "condition": "[ -f /etc/netplan/20-dhcp-wlan-interface.yaml ]",
-                                        "status": "Active",
-                                        "author": "Igor Pecovnik"
-                                    },
-                                    {
-                                        "id": "N10",
-                                        "description": "Enable IPV6",
-                                        "command": [" netplan_wrapper \"enable_ipv6\" \"false\" \"20-dhcp-wlan-interface\" \"wifis\" \"networkd\""],
-                                        "condition": "[ -f /etc/netplan/20-dhcp-wlan-interface.yaml ]",
-                                        "status": "Active",
-                                        "author": "Igor Pecovnik"
-                                    },
-                                    {
-                                        "id": "N11",
-                                        "description": "Enable DHCP on wireless network interface",
-                                        "command": [
-                                                    "wifi_connect"
-                                                ],
-                                        "status": "Active",
-                                        "author": "Igor Pecovnik",
-                                        "condition": "[ ! -f /etc/netplan/20-dhcp-wlan-interface.yaml ]"
-                                    }
-                                ]
-                            },
-                            {
-                                "id": "N12",
-                                "description": "Show common configs",
-                                "command": [ "show_message <<< \"$(sudo netplan get all)\"" ],
-                                "status": "Active",
-                                "doc_link": "",
-                                "src_reference": "",
-                                "author": "Igor Pecovnik",
-                                "condition": ""
-                            },
-                            {
-                                "id": "N13",
-                                "description": "Apply common configs",
-                                "prompt": "This will apply new network configuration\n\nwould you like to continue?",
-                                "command": [ "netplan apply" ],
-                                "status": "Active",
-                                "doc_link": "",
-                                "src_reference": "",
-                                "author": "Igor Pecovnik",
-                                "condition": ""
-                            },
-                            {
-                                "id": "N14",
-                                "description": "Display status",
-                                "command": [ "show_message <<< \"$(sudo netplan status)\"" ],
-                                "status": "Active",
-                                "doc_link": "",
-                                "src_reference": "",
-                                "author": "Igor Pecovnik",
-                                "condition": ""
-                            }
-                            ]
-                },
-                {
-                    "id": "N15",
-                    "description": "Install Bluetooth support",
-                    "command": [
-                        "see_current_apt ",
-                        "debconf-apt-progress -- apt-get -y install bluetooth bluez bluez-tools",
-                        "check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y --no-install-recommends install pulseaudio-module-bluetooth blueman"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "",
-                    "condition": "! check_if_installed bluetooth && ! check_if_installed bluez && ! check_if_installed bluez-tools"
-                },
-                {
-                    "id": "N16",
-                    "description": "Remove Bluetooth support",
-                    "command": [
-                        "see_current_apt ",
-						"debconf-apt-progress -- apt-get -y remove bluetooth bluez bluez-tools",
-						"check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y remove pulseaudio-module-bluetooth blueman",
-                        "debconf-apt-progress -- apt -y -qq autoremove"
-		            ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "",
-                    "condition": "check_if_installed bluetooth || check_if_installed bluez || check_if_installed bluez-tools"
-                },
-                {
-                    "id": "N17",
-                    "description": "Bluetooth Discover",
-                    "prompt": "This will enable bluetooth and discover devices\n\nWould you like to continue?",
-                    "command": [ "connect_bt_interface" ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "",
-                    "condition": "check_if_installed bluetooth || check_if_installed bluez || check_if_installed bluez-tools"
-                },
-                {
-                    "id": "N18",
-                    "description": "Toggle system IPv6/IPv4 internet protocol",
-                    "prompt": "This will toggle your internet protocol\nWould you like to continue?",
-                    "command": [ "toggle_ipv6 | show_infobox" ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": ""
-                }
-            ]
+          "id": "S02",
+          "description": "Disable Kernel/BSP upgrades",
+          "prompt": "Disable kernel and BSP package upgrades\nWould you like to continue?",
+          "command": [
+            "fw_manipulate hold"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "[[ -z \"$(apt-mark showhold)\" ]]"
         },
         {
-            "id": "Localisation",
-            "description": "Localisation",
-            "sub": [
-                {
-                    "id": "L00",
-                    "description": "Change Global timezone (WIP)",
-                    "command": [
-						"dpkg-reconfigure tzdata"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": ""
-                },
-                {
-                    "id": "L01",
-                    "description": "Change Locales reconfigure the language and character set",
-                    "command": [
-                        	"dpkg-reconfigure locales",
-							"source /etc/default/locale ; sed -i \"s/^LANGUAGE=.*/LANGUAGE=$LANG/\" /etc/default/locale",
-		                    "export LANGUAGE=$LANG"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": ""
-                },
-                {
-                    "id": "L02",
-                    "description": "Change Keyboard layout",
-                    "command": [
-						"dpkg-reconfigure keyboard-configuration ; setupcon ",
-			    "update-initramfs -u"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": ""
-                },
-                {
-                    "id": "L03",
-                    "description": "Change APT mirrors",
-                    "prompt": "This will change the APT mirrors\nWould you like to continue?",
-                    "command": [
-                        "get_user_continue \"This is only a frontend test\" process_input"
-                    ],
-                    "disabled": true,
-                    "status": "Active",
-                    "author": ""
-                }
-            ]
+          "id": "S03",
+          "description": "Edit the boot environment",
+          "prompt": "This will open /boot/uEnv.txt file for editing. Would you like to continue?",
+          "command": [
+            "nano /boot/uEnv.txt"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": ""
         },
         {
-            "id": "Software",
-            "description": "Run/Install 3rd party applications",
-            "sub": [
-                {
-                    "id": "SW01.1",
-                    "description": "Desktop Environments",
-                    "sub": [
-                        {
-                            "id": "SW02",
-                            "description": "Install XFCE desktop",
-                            "command": [ "install_de \"xfce\""],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": ""
-                        },
-                        {
-                            "id": "SW03",
-                            "description": "Install Gnome desktop",
-                            "command": [ "install_de \"gnome\""],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": ""
-                        },
-                        {
-                            "id": "SW04",
-                            "description": "Install i3-wm desktop",
-                            "command": [ "install_de \"i3-wm\""],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": ""
-                        },
-                        {
-                            "id": "SW05",
-                            "description": "Install Cinnamon desktop",
-                            "command": [ "install_de \"cinnamon\""],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": ""
-                        },
-                        {
-                            "id": "SW06",
-                            "description": "Install kde-neon desktop",
-                            "command": [ "install_de \"kde-neon\""],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": ""
-                        }
-                    ]
-                },
-                {
-                    "id": "SW01.2",
-                    "description": "Network tools",
-                    "sub": [
-                        {
-                            "id": "SW08",
-                            "description": "Install realtime console network usage monitor (nload)",
-                            "command": [
-                                "get_user_continue \"This operation will install nload.\n\nDo you wish to continue?\" process_input",
-                                "debconf-apt-progress -- apt-get -y install nload"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "! check_if_installed nload"
-                        },
-                        {
-                            "id": "SW09",
-                            "description": "Remove realtime console network usage monitor (nload)",
-                            "command": [
-                                "get_user_continue \"This operation will purge nload.\n\nDo you wish to continue?\" process_input",
-                                "debconf-apt-progress -- apt-get -y purge nload"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "check_if_installed nload"
-                        },
-                        {
-                            "id": "SW10",
-                            "description": "Install bandwidth measuring tool (iperf3)",
-                            "command": [
-                                "get_user_continue \"This operation will install iperf3.\n\nDo you wish to continue?\" process_input",
-                                "debconf-apt-progress -- apt-get -y install iperf3"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "! check_if_installed iperf3"
-                        },
-                        {
-                            "id": "SW11",
-                            "description": "Remove bandwidth measuring tool (iperf3)",
-                            "command": [
-                                "get_user_continue \"This operation will purge iperf3.\n\nDo you wish to continue?\" process_input",
-                                "debconf-apt-progress -- apt-get -y purge iperf3"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "check_if_installed iperf3"
-                        },
-                        {
-                            "id": "SW12",
-                            "description": "Install IP LAN monitor (iptraf-ng)",
-                            "command": [
-                                "get_user_continue \"This operation will install iptraf-ng.\n\nDo you wish to continue?\" process_input",
-                                "debconf-apt-progress -- apt-get -y install iptraf-ng"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "! check_if_installed iptraf-ng"
-                        },
-                        {
-                            "id": "SW13",
-                            "description": "Remove IP LAN monitor (iptraf-ng)",
-                            "command": [
-                                "get_user_continue \"This operation will purge nload.\n\nDo you wish to continue?\" process_input",
-                                "debconf-apt-progress -- apt-get -y purge iptraf-ng"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "check_if_installed iptraf-ng"
-                        },
-                        {
-                            "id": "SW14",
-                            "description": "Install hostname broadcast via mDNS (avahi-daemon)",
-                            "command": [
-                                "get_user_continue \"This operation will install avahi-daemon and add configuration files.\nDo you wish to continue?\" process_input",
-                                "check_if_installed avahi-daemon",
-                                "debconf-apt-progress -- apt-get -y install avahi-daemon libnss-mdns",
-                                "cp /usr/share/doc/avahi-daemon/examples/sftp-ssh.service /etc/avahi/services/",
-                                "cp /usr/share/doc/avahi-daemon/examples/ssh.service /etc/avahi/services/",
-                                "service avahi-daemon restart"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "! check_if_installed avahi-daemon"
-                        },
-                        {
-                            "id": "SW15",
-                            "description": "Remove hostname broadcast via mDNS (avahi-daemon)",
-                            "command": [
-                                "get_user_continue \"This operation will purge avahi-daemon \nDo you wish to continue?\" process_input",
-                                "check_if_installed avahi-daemon",
-                                "systemctl stop avahi-daemon avahi-daemon.socket",
-                                "debconf-apt-progress -- apt-get -y purge avahi-daemon"
-                            ],
-                            "status": "Active",
-                            "doc_link": "",
-                            "src_reference": "",
-                            "author": "",
-                            "condition": "check_if_installed avahi-daemon"
-                        }
-                    ]
-                },
-                {
-                "id": "SW01.3",
-                "description": "Development",
-                "sub": [
-                    {
-                        "id": "SW17",
-                        "description": "Install tools for cloning and managing repositories (git)",
-                        "command": [
-                            "get_user_continue \"This operation will install git.\n\nDo you wish to continue?\" process_input",
-                            "debconf-apt-progress -- apt-get -y install git"
-                        ],
-                        "status": "Active",
-                        "doc_link": "",
-                        "src_reference": "",
-                        "author": "",
-                        "condition": "! check_if_installed git"
-                     },
-                     {
-                        "id": "SW18",
-                        "description": "Remove tools for cloning and managing repositories (git)",
-                        "command": [
-                            "get_user_continue \"This operation will remove git.\n\nDo you wish to continue?\" process_input",
-                            "debconf-apt-progress -- apt-get -y purge git"
-                        ],
-                        "status": "Active",
-                        "doc_link": "",
-                        "src_reference": "",
-                        "author": "",
-                        "condition": "check_if_installed git"
-                     }
-                    ]
-                },
-                {
-                    "id": "SW19",
-                    "description": "Update Application Repository",
-                    "prompt": "This will update the apt repository\nWould you like to continue?",
-                    "command": [ "debconf-apt-progress -- apt update" ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": ""
-                },
-                {
-                    "id": "SW20",
-                    "description": "System benchmaking and diagnostics",
-                    "command": [
-                        "see_monitoring"
-                    ],
-                    "status": "Active",
-                    "doc_link": "",
-                    "src_reference": "",
-                    "author": "",
-                    "condition": "[ -f /usr/bin/armbianmonitor ]"
-        
-                }
-            ]
+          "id": "S04",
+          "description": "Install Linux headers",
+          "command": [
+            "headers_install"
+          ],
+          "status": "Pending Review",
+          "doc_link": "https://github.com/armbian/config/wiki#System",
+          "src_reference": "https://github.com/armbian/config/blob/master/debian-config-jobs#L160",
+          "author": "https://github.com/Tearran",
+          "condition": "! are_headers_installed"
         },
         {
-            "id": "Help",
-            "description": "About this app",
-            "command": [
-                "show_message <<< \"This app is to help execute procedures to configure your system\n\nSome options may not work on manually modified systems\""
-            ],
-            "status": "Active",
-            "doc_link": "",
-            "src_reference": "",
-            "author": ""
+          "id": "S05",
+          "description": "Remove Linux headers",
+          "command": [
+            "headers_remove"
+          ],
+          "status": "Pending Review",
+          "doc_link": "https://github.com/armbian/config/wiki#System",
+          "src_reference": "https://github.com/armbian/config/blob/master/debian-config-jobs#L160",
+          "author": "https://github.com/Tearran",
+          "condition": "are_headers_installed"
+        },
+        {
+          "id": "S06",
+          "description": "Install to another storage",
+          "command": [
+            "/usr/sbin/emmc-install"
+          ],
+          "status": "Pending Review",
+          "doc_link": "https://github.com/armbian/config/wiki#System",
+          "src_reference": "",
+          "author": "https://github.com/igorpecovnik",
+          "condition": "[[ -e /usr/sbin/emmc-install ]]"
+        },
+        {
+          "id": "S07",
+          "description": "Manage SSH login options",
+          "sub": [
+            {
+              "id": "S0701",
+              "description": "Disable root login",
+              "command": [
+                "sed -i \"s|^#\\?PermitRootLogin.*|PermitRootLogin no|\" /etc/ssh/sshd_config",
+                "systemctl restart sshd.service"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^PermitRootLogin yes'  /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0702",
+              "description": "Enable root login",
+              "command": [
+                "sed -i \"s/^#\\?PermitRootLogin.*/PermitRootLogin yes/\" /etc/ssh/sshd_config",
+                "systemctl restart sshd.service"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^PermitRootLogin no' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0703",
+              "description": "Disable password login",
+              "command": [
+                "sed -i \"s/^#\\?PasswordAuthentication.*/PasswordAuthentication no/\" /etc/ssh/sshd_config",
+                "systemctl restart sshd.service"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q 'PasswordAuthentication yes' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0704",
+              "description": "Enable password login",
+              "command": [
+                "sed -i \"s/^#\\?PasswordAuthentication.*/PasswordAuthentication yes/\" /etc/ssh/sshd_config",
+                "systemctl restart sshd.service"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q 'PasswordAuthentication no' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0705",
+              "description": "Disable Public key authentication login",
+              "command": [
+                "sed -i \"s/^#\\?PubkeyAuthentication.*/PubkeyAuthentication no/\" /etc/ssh/sshd_config",
+                "systemctl restart sshd.service"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q 'PubkeyAuthentication yes' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0706",
+              "description": "Enable Public key authentication login",
+              "command": [
+                "sed -i \"s/^#\\?PubkeyAuthentication.*/PubkeyAuthentication yes/\" /etc/ssh/sshd_config",
+                "systemctl restart sshd.service"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q 'PubkeyAuthentication no' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0707",
+              "description": "Disable OTP authentication",
+              "command": [
+                "clear",
+                "! check_if_installed libpam-google-authenticator && ! check_if_installed qrencode || debconf-apt-progress -- apt-get -y purge libpam-google-authenticator qrencode",
+                "sed -i \"s/^#\\?ChallengeResponseAuthentication.*/ChallengeResponseAuthentication no/\" /etc/ssh/sshd_config || sed -i \"0,/KbdInteractiveAuthentication/s//ChallengeResponseAuthentication yes/\" /etc/ssh/sshd_config",
+                "sed -i '/^auth required pam_google_authenticator.so nullok/ d' /etc/pam.d/sshd",
+                "systemctl restart sshd.service"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q 'ChallengeResponseAuthentication yes' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0708",
+              "description": "Enable OTP authentication",
+              "command": [
+                "check_if_installed libpam-google-authenticator || debconf-apt-progress -- apt-get -y install libpam-google-authenticator",
+                "check_if_installed qrencode || debconf-apt-progress -- apt-get -y install qrencode",
+                "sed -i \"s/^#\\?ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/\" /etc/ssh/sshd_config",
+                "sed -i $'/KbdInteractiveAuthentication/{iChallengeResponseAuthentication yes\\n:a;n;ba}' /etc/ssh/sshd_config || sed -n -i '/password updating/{p;:a;N;/@include common-password/!ba;s/.*\\n/auth required pam_google_authenticator.so nullok\\nauth required pam_permit.so\\n/};p' /etc/pam.d/sshd",
+                "[ ! -f /root/.google_authenticator ] && qr_code generate",
+                "systemctl restart sshd.service"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "! check_if_installed libpam-google-authenticator || ! check_if_installed qrencode || grep -q '^ChallengeResponseAuthentication no' /etc/ssh/sshd_config || ! grep -q 'ChallengeResponseAuthentication' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0709",
+              "description": "Generate new OTP authentication QR code",
+              "command": [
+                "qr_code generate"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^ChallengeResponseAuthentication yes' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0710",
+              "description": "Show OTP authentication QR code",
+              "command": [
+                "qr_code"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "Igor Pecovnik",
+              "condition": "grep -q '^ChallengeResponseAuthentication yes' /etc/ssh/sshd_config && [ -f /root/.google_authenticator ]"
+            }
+          ]
+        },
+        {
+          "id": "S08",
+          "description": "Enable read only filesystem",
+          "prompt": "This will enable Armbian read-only filesystem. Changes will be reflected after reboot.\n\nWould you like to continue?",
+          "command": [
+            "manage_overlayfs enable"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "Igor Pecovnik",
+          "condition": "modinfo overlay > /dev/null 2>&1 && [[ -z $(findmnt -k /media/root-ro | tail -1) ]] && [[ \"${DISTRO}\"=Ubuntu ]]"
+        },
+        {
+          "id": "S09",
+          "description": "Disable read only filesystem",
+          "prompt": "This will disable Armbian read-only filesystem. Changes will be reflected after reboot.\n\nWould you like to continue?",
+          "command": [
+            "manage_overlayfs disable"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "Igor Pecovnik",
+          "condition": "command -v overlayroot-chroot > /dev/null 2>&1 && findmnt -k /media/root-ro | tail -1 | grep -w /media/root-ro > /dev/null 2>&1"
+        },
+        {
+          "id": "S10",
+          "description": "Set CPU speed and governor",
+          "sub": [
+            {
+              "id": "S1001",
+              "description": "Disable CPU frequency utilities",
+              "command": [
+                "sed -i \"s/ENABLE=.*/ENABLE=false/\" /etc/default/cpufrequtils",
+                "systemctl restart cpufrequtils"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
+            },
+            {
+              "id": "S1002",
+              "description": "Enable CPU frequency utilities",
+              "command": [
+                "sed -i \"s/ENABLE=.*/ENABLE=false/\" /etc/default/cpufrequtils",
+                "systemctl restart cpufrequtils"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^ENABLE=false' /etc/default/cpufrequtils"
+            },
+            {
+              "id": "S1003",
+              "description": "Set minimum CPU speed",
+              "command": [
+                "set_cpufreq_option MIN_SPEED"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
+            },
+            {
+              "id": "S1004",
+              "description": "Set maximum CPU speed",
+              "command": [
+                "set_cpufreq_option MAX_SPEED"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
+            },
+            {
+              "id": "S1005",
+              "description": "Set CPU scaling governor",
+              "command": [
+                "set_cpufreq_option GOVERNOR"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^ENABLE=true' /etc/default/cpufrequtils"
+            }
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "Gunjan Gupta",
+          "condition": "check_if_installed cpufrequtils"
+        },
+        {
+          "id": "S11",
+          "description": "Set fan control options",
+          "sub": [
+            {
+              "id": "S1101",
+              "description": "Set fan mode",
+              "command": [
+                "set_fan_controls mode"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": ""
+            },
+            {
+              "id": "S1102",
+              "description": "Set fan level",
+              "command": [
+                "set_fan_controls level"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": ""
+            },
+            {
+              "id": "S1103",
+              "description": "Show current fan status",
+              "command": [
+                "/usr/local/bin/fan.sh mode | show_message"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": ""
+            }
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "Gunjan Gupta",
+          "condition": "[ -e /usr/local/bin/fan.sh ] && [ -e /sys/class/fan/mode ]  && [ -e /sys/class/fan/level ]"
+        },
+        {
+          "id": "S12",
+          "description": "Manage device tree overlays",
+          "command": [
+            "manage_dtoverlays"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "Gunjan Gupta"
         }
-    ]
+      ]
+    },
+    {
+      "id": "Network",
+      "description": "Fixed and wireless network settings",
+      "sub": [
+        {
+          "id": "N01.1",
+          "description": "Configure network interfaces",
+          "sub": [
+            {
+              "id": "N01.1.1",
+              "description": "Wired",
+              "sub": [
+                {
+                  "id": "N01",
+                  "description": "Show configuration",
+                  "command": [
+                    "netplan_wrapper \"show_message\" \"\" \"\" \"ethernets\""
+                  ],
+                  "status": "Active",
+                  "doc_link": "",
+                  "src_reference": "",
+                  "author": "Igor Pecovnik",
+                  "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
+                },
+                {
+                  "id": "N02",
+                  "description": "Enable DHCP on all interfaces",
+                  "command": [
+                    "netplan_wrapper \"dhcp_all_wired_interfaces\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""
+                  ],
+                  "status": "Active",
+                  "author": "Igor Pecovnik",
+                  "condition": "[ ! -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
+                },
+                {
+                  "id": "N03",
+                  "description": "Set fixed IP address",
+                  "command": [
+                    " netplan_wrapper \"set_ip\" \"true\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""
+                  ],
+                  "status": "Active",
+                  "doc_link": "",
+                  "src_reference": "",
+                  "author": "Igor Pecovnik",
+                  "condition": ""
+                },
+                {
+                  "id": "N04",
+                  "description": "Disable IPV6",
+                  "command": [
+                    " netplan_wrapper \"disable_ipv6\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""
+                  ],
+                  "status": "Pending Review",
+                  "doc_link": "",
+                  "src_reference": "",
+                  "author": "Igor Pecovnik",
+                  "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
+                },
+                {
+                  "id": "N05",
+                  "description": "Enable IPV6",
+                  "command": [
+                    " netplan_wrapper \"enable_ipv6\" \"false\" \"10-dhcp-all-interfaces\" \"ethernets\" \"networkd\""
+                  ],
+                  "status": "Pending Review",
+                  "doc_link": "",
+                  "src_reference": "",
+                  "author": "Igor Pecovnik",
+                  "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]"
+                },
+                {
+                  "id": "N06",
+                  "description": "Disable wired networking",
+                  "command": [
+                    "rm -f /etc/netplan/10-dhcp-all-interfaces.yaml /etc/netplan/30-*static-interfaces.yaml"
+                  ],
+                  "condition": "[ -f /etc/netplan/30-*static-interfaces.yaml ] || [ -f /etc/netplan/10-dhcp-all-interfaces.yaml ]",
+                  "status": "Active",
+                  "author": "Igor Pecovnik"
+                }
+              ]
+            },
+            {
+              "id": "N01.1.2",
+              "description": "Wireless",
+              "sub": [
+                {
+                  "id": "N07",
+                  "description": "Show configuration",
+                  "command": [
+                    "netplan_wrapper \"show_message\" \"\" \"\" \"wifis\""
+                  ],
+                  "condition": "[ -f /etc/netplan/20-dhcp-wlan-interface.yaml ]",
+                  "status": "Active",
+                  "author": "Igor Pecovnik"
+                },
+                {
+                  "id": "N08",
+                  "description": "Disable wireless networking",
+                  "command": [
+                    "rm -f /etc/netplan/20-dhcp-wlan-interface.yaml"
+                  ],
+                  "condition": "[ -f /etc/netplan/20-dhcp-wlan-interface.yaml ]",
+                  "status": "Active",
+                  "author": "Igor Pecovnik"
+                },
+                {
+                  "id": "N09",
+                  "description": "Disable IPV6",
+                  "command": [
+                    " netplan_wrapper \"disable_ipv6\" \"false\" \"20-dhcp-wlan-interface\" \"wifis\" \"networkd\""
+                  ],
+                  "condition": "[ -f /etc/netplan/20-dhcp-wlan-interface.yaml ]",
+                  "status": "Active",
+                  "author": "Igor Pecovnik"
+                },
+                {
+                  "id": "N10",
+                  "description": "Enable IPV6",
+                  "command": [
+                    " netplan_wrapper \"enable_ipv6\" \"false\" \"20-dhcp-wlan-interface\" \"wifis\" \"networkd\""
+                  ],
+                  "condition": "[ -f /etc/netplan/20-dhcp-wlan-interface.yaml ]",
+                  "status": "Active",
+                  "author": "Igor Pecovnik"
+                },
+                {
+                  "id": "N11",
+                  "description": "Enable DHCP on wireless network interface",
+                  "command": [
+                    "wifi_connect"
+                  ],
+                  "status": "Active",
+                  "author": "Igor Pecovnik",
+                  "condition": "[ ! -f /etc/netplan/20-dhcp-wlan-interface.yaml ]"
+                }
+              ]
+            },
+            {
+              "id": "N12",
+              "description": "Show common configs",
+              "command": [
+                "show_message <<< \"$(sudo netplan get all)\""
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "Igor Pecovnik",
+              "condition": ""
+            },
+            {
+              "id": "N13",
+              "description": "Apply common configs",
+              "prompt": "This will apply new network configuration\n\nwould you like to continue?",
+              "command": [
+                "netplan apply"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "Igor Pecovnik",
+              "condition": ""
+            },
+            {
+              "id": "N14",
+              "description": "Display status",
+              "command": [
+                "show_message <<< \"$(sudo netplan status)\""
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "Igor Pecovnik",
+              "condition": ""
+            }
+          ]
+        },
+        {
+          "id": "N15",
+          "description": "Install Bluetooth support",
+          "command": [
+            "see_current_apt ",
+            "debconf-apt-progress -- apt-get -y install bluetooth bluez bluez-tools",
+            "check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y --no-install-recommends install pulseaudio-module-bluetooth blueman"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "! check_if_installed bluetooth && ! check_if_installed bluez && ! check_if_installed bluez-tools"
+        },
+        {
+          "id": "N16",
+          "description": "Remove Bluetooth support",
+          "command": [
+            "see_current_apt ",
+            "debconf-apt-progress -- apt-get -y remove bluetooth bluez bluez-tools",
+            "check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y remove pulseaudio-module-bluetooth blueman",
+            "debconf-apt-progress -- apt -y -qq autoremove"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "check_if_installed bluetooth || check_if_installed bluez || check_if_installed bluez-tools"
+        },
+        {
+          "id": "N17",
+          "description": "Bluetooth Discover",
+          "prompt": "This will enable bluetooth and discover devices\n\nWould you like to continue?",
+          "command": [
+            "connect_bt_interface"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "check_if_installed bluetooth || check_if_installed bluez || check_if_installed bluez-tools"
+        },
+        {
+          "id": "N18",
+          "description": "Toggle system IPv6/IPv4 internet protocol",
+          "prompt": "This will toggle your internet protocol\nWould you like to continue?",
+          "command": [
+            "toggle_ipv6 | show_infobox"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": ""
+        }
+      ]
+    },
+    {
+      "id": "Localisation",
+      "description": "Localisation",
+      "sub": [
+        {
+          "id": "L00",
+          "description": "Change Global timezone (WIP)",
+          "command": [
+            "dpkg-reconfigure tzdata"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": ""
+        },
+        {
+          "id": "L01",
+          "description": "Change Locales reconfigure the language and character set",
+          "command": [
+            "dpkg-reconfigure locales",
+            "source /etc/default/locale ; sed -i \"s/^LANGUAGE=.*/LANGUAGE=$LANG/\" /etc/default/locale",
+            "export LANGUAGE=$LANG"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": ""
+        },
+        {
+          "id": "L02",
+          "description": "Change Keyboard layout",
+          "command": [
+            "dpkg-reconfigure keyboard-configuration ; setupcon ",
+            "update-initramfs -u"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": ""
+        },
+        {
+          "id": "L03",
+          "description": "Change APT mirrors",
+          "prompt": "This will change the APT mirrors\nWould you like to continue?",
+          "command": [
+            "get_user_continue \"This is only a frontend test\" process_input"
+          ],
+          "disabled": true,
+          "status": "Active",
+          "author": ""
+        }
+      ]
+    },
+    {
+      "id": "Software",
+      "description": "Run/Install 3rd party applications",
+      "sub": [
+        {
+          "id": "SW01",
+          "description": "Desktop Environments",
+          "sub": [
+            {
+              "id": "SW0101",
+              "description": "Install XFCE desktop",
+              "command": [
+                "install_de \"xfce\""
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": ""
+            },
+            {
+              "id": "SW0102",
+              "description": "Install Gnome desktop",
+              "command": [
+                "install_de \"gnome\""
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": ""
+            },
+            {
+              "id": "SW0103",
+              "description": "Install i3-wm desktop",
+              "command": [
+                "install_de \"i3-wm\""
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": ""
+            },
+            {
+              "id": "SW0104",
+              "description": "Install Cinnamon desktop",
+              "command": [
+                "install_de \"cinnamon\""
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": ""
+            },
+            {
+              "id": "SW0105",
+              "description": "Install kde-neon desktop",
+              "command": [
+                "install_de \"kde-neon\""
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": ""
+            }
+          ],
+          "condition": "[ -f /etc/apt/sources.list.d/armbian.list ]"
+        },
+        {
+          "id": "SW02",
+          "description": "Network tools",
+          "sub": [
+            {
+              "id": "SW0201",
+              "description": "Install realtime console network usage monitor (nload)",
+              "command": [
+                "get_user_continue \"This operation will install nload.\n\nDo you wish to continue?\" process_input",
+                "debconf-apt-progress -- apt-get -y install nload"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "! check_if_installed nload"
+            },
+            {
+              "id": "SW0202",
+              "description": "Remove realtime console network usage monitor (nload)",
+              "command": [
+                "get_user_continue \"This operation will purge nload.\n\nDo you wish to continue?\" process_input",
+                "debconf-apt-progress -- apt-get -y purge nload"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "check_if_installed nload"
+            },
+            {
+              "id": "SW0203",
+              "description": "Install bandwidth measuring tool (iperf3)",
+              "command": [
+                "get_user_continue \"This operation will install iperf3.\n\nDo you wish to continue?\" process_input",
+                "debconf-apt-progress -- apt-get -y install iperf3"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "! check_if_installed iperf3"
+            },
+            {
+              "id": "SW0204",
+              "description": "Remove bandwidth measuring tool (iperf3)",
+              "command": [
+                "get_user_continue \"This operation will purge iperf3.\n\nDo you wish to continue?\" process_input",
+                "debconf-apt-progress -- apt-get -y purge iperf3"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "check_if_installed iperf3"
+            },
+            {
+              "id": "SW0205",
+              "description": "Install IP LAN monitor (iptraf-ng)",
+              "command": [
+                "get_user_continue \"This operation will install iptraf-ng.\n\nDo you wish to continue?\" process_input",
+                "debconf-apt-progress -- apt-get -y install iptraf-ng"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "! check_if_installed iptraf-ng"
+            },
+            {
+              "id": "SW0206",
+              "description": "Remove IP LAN monitor (iptraf-ng)",
+              "command": [
+                "get_user_continue \"This operation will purge nload.\n\nDo you wish to continue?\" process_input",
+                "debconf-apt-progress -- apt-get -y purge iptraf-ng"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "check_if_installed iptraf-ng"
+            },
+            {
+              "id": "SW0207",
+              "description": "Install hostname broadcast via mDNS (avahi-daemon)",
+              "command": [
+                "get_user_continue \"This operation will install avahi-daemon and add configuration files.\nDo you wish to continue?\" process_input",
+                "check_if_installed avahi-daemon",
+                "debconf-apt-progress -- apt-get -y install avahi-daemon libnss-mdns",
+                "cp /usr/share/doc/avahi-daemon/examples/sftp-ssh.service /etc/avahi/services/",
+                "cp /usr/share/doc/avahi-daemon/examples/ssh.service /etc/avahi/services/",
+                "service avahi-daemon restart"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "! check_if_installed avahi-daemon"
+            },
+            {
+              "id": "SW0208",
+              "description": "Remove hostname broadcast via mDNS (avahi-daemon)",
+              "command": [
+                "get_user_continue \"This operation will purge avahi-daemon \nDo you wish to continue?\" process_input",
+                "check_if_installed avahi-daemon",
+                "systemctl stop avahi-daemon avahi-daemon.socket",
+                "debconf-apt-progress -- apt-get -y purge avahi-daemon"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "check_if_installed avahi-daemon"
+            }
+          ]
+        },
+        {
+          "id": "SW03",
+          "description": "Development tools",
+          "sub": [
+            {
+              "id": "SW0301",
+              "description": "Install tools for cloning and managing repositories (git)",
+              "command": [
+                "get_user_continue \"This operation will install git.\n\nDo you wish to continue?\" process_input",
+                "debconf-apt-progress -- apt-get -y install git"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "! check_if_installed git"
+            },
+            {
+              "id": "SW0302",
+              "description": "Remove tools for cloning and managing repositories (git)",
+              "command": [
+                "get_user_continue \"This operation will remove git.\n\nDo you wish to continue?\" process_input",
+                "debconf-apt-progress -- apt-get -y purge git"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "check_if_installed git"
+            },
+            {
+              "id": "SW0303",
+              "description": "Install Docker",
+              "command": [
+                "install_docker"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "! check_if_installed docker-ce && ! check_if_installed docker.io"
+            },
+            {
+              "id": "SW0304",
+              "description": "Remove Docker",
+              "prompt": "This will remove docker and its configuration\nWDo you wish to continue?",
+              "command": [
+                "remove_docker"
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "check_if_installed docker-ce || check_if_installed docker.io"
+            }
+          ]
+        },
+        {
+          "id": "SW04",
+          "description": "Install system updates",
+          "prompt": "This will install updates from the apt repository\nWould you like to continue?",
+          "command": [
+            "debconf-apt-progress -- apt update",
+            "debconf-apt-progress -- apt -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\" dist-upgrade -y"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": ""
+        }
+      ]
+    },
+    {
+      "id": "Help",
+      "description": "About this app",
+      "command": [
+        "show_message <<< \"This app is to help execute procedures to configure your system\n\nSome options may not work on manually modified systems\""
+      ],
+      "status": "Active",
+      "doc_link": "",
+      "src_reference": "",
+      "author": ""
+    }
+  ]
 }
