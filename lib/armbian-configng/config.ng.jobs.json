@@ -216,13 +216,39 @@
               "src_reference": "",
               "author": "Igor Pecovnik",
               "condition": "grep -q '^ChallengeResponseAuthentication yes' /etc/ssh/sshd_config && [ -f /root/.google_authenticator ]"
+            },
+            {
+              "id": "S0711",
+              "description": "Disable last login banner",
+              "command": [
+                "sed -i \"s/^#\\?PrintLastLog.*/PrintLastLog no/\" /etc/ssh/sshd_config" ,
+                "systemctl restart ssh.service "
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^PrintLastLog yes' /etc/ssh/sshd_config"
+            },
+            {
+              "id": "S0712",
+              "description": "Enable last login banner",
+              "command": [
+                "sed -i \"s/^#\\?PrintLastLog.*/PrintLastLog yes/\" /etc/ssh/sshd_config" ,
+                "systemctl restart ssh.service "
+              ],
+              "status": "Active",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "grep -q '^PrintLastLog no' /etc/ssh/sshd_config"
             }
           ]
         },
         {
           "id": "S08",
           "description": "Enable read only filesystem",
-          "prompt": "This will enable Armbian read-only filesystem. Changes will be reflected after reboot.\n\nWould you like to continue?",
+          "prompt": "This will enable read-only filesystem. Changes will be reflected after reboot.\n\nWould you like to continue?",
           "command": [
             "manage_overlayfs enable"
           ],
@@ -235,7 +261,7 @@
         {
           "id": "S09",
           "description": "Disable read only filesystem",
-          "prompt": "This will disable Armbian read-only filesystem. Changes will be reflected after reboot.\n\nWould you like to continue?",
+          "prompt": "This will disable read-only filesystem. Changes will be reflected after reboot.\n\nWould you like to continue?",
           "command": [
             "manage_overlayfs disable"
           ],
