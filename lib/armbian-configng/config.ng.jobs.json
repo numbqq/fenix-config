@@ -568,13 +568,13 @@
               "id": "N0105",
               "description": "Display status",
               "command": [
-                "show_message <<< \"$(sudo netplan status)\""
+                "show_message <<< \"$(netplan status --all)\""
               ],
               "status": "Active",
               "doc_link": "",
               "src_reference": "",
               "author": "Igor Pecovnik",
-              "condition": ""
+              "condition": "[ $(netplan get network.renderer) == networkd ]"
             }
           ],
           "condition": "check_if_installed netplan.io"
