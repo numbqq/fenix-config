@@ -228,7 +228,7 @@
               "doc_link": "",
               "src_reference": "",
               "author": "",
-              "condition": "grep -q '^PrintLastLog yes' /etc/ssh/sshd_config"
+              "condition": "! grep -q '^PrintLastLog no' /etc/ssh/sshd_config"
             },
             {
               "id": "S0712",
