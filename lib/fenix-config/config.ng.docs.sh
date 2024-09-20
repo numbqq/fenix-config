@@ -25,37 +25,17 @@ echo -e "Sorting data\nUpdating documentation" # current_date ;
 
 cat << EOF > "$script_dir/../README.md"
 
-# Armbian Configuration Utility
+# Fenix Configuration Utility
 Updated: $current_date
 
-Utility for configuring your board, adjusting services, and installing applications. It comes with Armbian by default.
+Utility for configuring your board, adjusting services, and installing applications. It comes with Fenix by default.
 
-To start the Armbian configuration utility, use the following command:
+To start the Fenix configuration utility, use the following command:
 ~~~
 sudo ${script_name}
 ~~~
 
 $(see_full_list)
-
-## Install 
-Armbian installation 
-~~~
-sudo apt install armbian-config
-~~~
-
-3rd party Debian based distributions
-~~~
-{
-    sudo wget https://apt.armbian.com/armbian.key -O key
-    sudo gpg --dearmor < key | sudo tee /usr/share/keyrings/armbian.gpg > /dev/null
-    sudo chmod go+r /usr/share/keyrings/armbian.gpg
-    sudo echo "deb [arch=\$(dpkg --print-architecture) signed-by=/usr/share/keyrings/armbian.gpg] http://apt.armbian.com \$(lsb_release -cs) main  \$(lsb_release -cs)-utils  \$(lsb_release -cs)-desktop" | sudo tee /etc/apt/sources.list.d/armbian.list
-    sudo apt update
-    sudo apt install armbian-config
-}
-~~~
-
-***
 
 ## CLI options
 Command line options.
@@ -69,21 +49,6 @@ Outputs:
 ~~~
 $(see_cmd_list)
 ~~~
-
-## Legacy options
-Backward Compatible options.
-
-Use:
-~~~
-${script_name} main=Help
-~~~
-
-Outputs:
-~~~
-$(see_cli_legacy)
-~~~
-
-***
 
 ## Development
 
@@ -113,15 +78,6 @@ $(see_function_table_md)
 
 
 <details>
-<summary><b>Runtime / Board Statuses</b></summary>
-
-(WIP)
-
-This section outlines the runtime environment to check configurations and statuses for dynamically managing jobs based on JSON data.
-
-(WIP)
-
-</details>
 
 
 ## Testing and contributing
@@ -137,23 +93,9 @@ sudo apt install git jq whiptail
 Get Development and contribute:
 ~~~
 {
-    git clone https://github.com/armbian/configng
+    git clone https://github.com/khadas/fenix-config -b configng configng
     cd configng
     ./${script_name} --help
-}
-~~~
-
-Install and test Development deb:
-~~~
-{
-    sudo apt install whiptail
-    latest_release=\$(curl -s https://api.github.com/repos/armbian/configng/releases/latest)
-    deb_url=\$(echo "\$latest_release" | jq -r '.assets[] | select(.name | endswith(".deb")) | .browser_download_url')
-    curl -LO "\$deb_url"
-    deb_file=\$(echo "\$deb_url" | awk -F"/" '{print \$NF}')
-    sudo dpkg -i "\$deb_file"
-    sudo dpkg --configure -a
-    sudo apt --fix-broken install
 }
 ~~~
 

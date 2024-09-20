@@ -407,7 +407,7 @@
       "sub": [
         {
           "id": "N01",
-          "description": "Configure network interfaces",
+          "description": "Configure network interfaces using Netplan",
           "sub": [
             {
               "id": "N0101",
@@ -581,7 +581,7 @@
         },
         {
           "id": "N02",
-          "description": "Configure network interfaces",
+          "description": "Configure network interfaces using NetworkManager",
           "command": [
             "nmtui-connect"
           ],

@@ -1,12 +1,12 @@
 
-# Armbian Configuration Utility
-Updated: Wed Sep 18 01:52:56 PM IST 2024
+# Fenix Configuration Utility
+Updated: Fri Sep 20 03:47:13 AM UTC 2024
 
-Utility for configuring your board, adjusting services, and installing applications. It comes with Armbian by default.
+Utility for configuring your board, adjusting services, and installing applications. It comes with Fenix by default.
 
-To start the Armbian configuration utility, use the following command:
+To start the Fenix configuration utility, use the following command:
 ~~~
-sudo armbian-configng
+sudo fenix-config
 ~~~
 
 - ## **System** 
@@ -25,18 +25,18 @@ sudo armbian-configng
 
 
 - ## **Network** 
-  - **N01.1** - Configure network interfaces
-  - **N15** - Install Bluetooth support
-  - **N16** - Remove Bluetooth support
-  - **N17** - Bluetooth Discover
-  - **N18** - Toggle system IPv6/IPv4 internet protocol
+  - **N01** - Configure network interfaces using Netplan
+  - **N02** - Configure network interfaces using NetworkManager
+  - **N03** - Install Bluetooth support
+  - **N04** - Remove Bluetooth support
+  - **N05** - Bluetooth Discover
+  - **N06** - Toggle system IPv6/IPv4 internet protocol
 
 
 - ## **Localisation** 
-  - **L00** - Change Global timezone (WIP)
-  - **L01** - Change Locales reconfigure the language and character set
-  - **L02** - Change Keyboard layout
-  - **L03** - Change APT mirrors
+  - **L01** - Change Global timezone
+  - **L02** - Change Locales reconfigure the language and character set
+  - **L03** - Change Keyboard layout
 
 
 - ## **Software** 
@@ -48,32 +48,12 @@ sudo armbian-configng
 
 - ## **Help** 
 
-## Install 
-Armbian installation 
-~~~
-sudo apt install armbian-config
-~~~
-
-3rd party Debian based distributions
-~~~
-{
-    sudo wget https://apt.armbian.com/armbian.key -O key
-    sudo gpg --dearmor < key | sudo tee /usr/share/keyrings/armbian.gpg > /dev/null
-    sudo chmod go+r /usr/share/keyrings/armbian.gpg
-    sudo echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/armbian.gpg] http://apt.armbian.com $(lsb_release -cs) main  $(lsb_release -cs)-utils  $(lsb_release -cs)-desktop" | sudo tee /etc/apt/sources.list.d/armbian.list
-    sudo apt update
-    sudo apt install armbian-config
-}
-~~~
-
-***
-
 ## CLI options
 Command line options.
 
 Use:
 ~~~
-armbian-configng --help
+fenix-config --help
 ~~~
 
 Outputs:
@@ -97,6 +77,8 @@ Outputs:
 	--cmd S0708 - Enable OTP authentication
 	--cmd S0709 - Generate new OTP authentication QR code
 	--cmd S0710 - Show OTP authentication QR code
+	--cmd S0711 - Disable last login banner
+	--cmd S0712 - Enable last login banner
     --cmd S08 - Enable read only filesystem
     --cmd S09 - Disable read only filesystem
     S10 - Set CPU speed and governor
@@ -112,35 +94,35 @@ Outputs:
     --cmd S12 - Manage device tree overlays
 
   Network - Fixed and wireless network settings (wlan0)
-    N01.1 - Configure network interfaces
-      N01.1.1 - Wired
-	--cmd N01 - Show configuration
-	--cmd N02 - Enable DHCP on all interfaces
-	--cmd N03 - Set fixed IP address
-	--cmd N04 - Disable IPV6
-	--cmd N05 - Enable IPV6
-	--cmd N06 - Disable wired networking
-      N01.1.2 - Wireless
-	--cmd N07 - Show configuration
-	--cmd N08 - Disable wireless networking
-	--cmd N09 - Disable IPV6
-	--cmd N10 - Enable IPV6
-	--cmd N11 - Enable DHCP on wireless network interface
-	--cmd N12 - Show common configs
-	--cmd N13 - Apply common configs
-	--cmd N14 - Display status
-    --cmd N15 - Install Bluetooth support
-    --cmd N16 - Remove Bluetooth support
-    --cmd N17 - Bluetooth Discover
-    --cmd N18 - Toggle system IPv6/IPv4 internet protocol
+    N01 - Configure network interfaces using Netplan
+      N0101 - Wired
+	--cmd N010101 - Show configuration
+	--cmd N010102 - Enable DHCP on all interfaces
+	--cmd N010103 - Set fixed IP address
+	--cmd N010104 - Disable IPV6
+	--cmd N010105 - Enable IPV6
+	--cmd N010106 - Disable wired networking
+      N0102 - Wireless
+	--cmd N010201 - Show configuration
+	--cmd N010202 - Disable wireless networking
+	--cmd N010203 - Disable IPV6
+	--cmd N010204 - Enable IPV6
+	--cmd N010205 - Enable DHCP on wireless network interface
+	--cmd N0103 - Show common configs
+	--cmd N0104 - Apply common configs
+	--cmd N0105 - Display status
+    --cmd N02 - Configure network interfaces using NetworkManager
+    --cmd N03 - Install Bluetooth support
+    --cmd N04 - Remove Bluetooth support
+    --cmd N05 - Bluetooth Discover
+    --cmd N06 - Toggle system IPv6/IPv4 internet protocol
 
   Localisation - Localisation (en_US.UTF-8)
-    --cmd L00 - Change Global timezone (WIP)
-    --cmd L01 - Change Locales reconfigure the language and character set
-    --cmd L02 - Change Keyboard layout
-    --cmd L03 - Change APT mirrors
+    --cmd L01 - Change Global timezone
+    --cmd L02 - Change Locales reconfigure the language and character set
+    --cmd L03 - Change Keyboard layout
 
-  Software - Run/Install 3rd party applications (01:03:43)
+  Software - Run/Install 3rd party applications (02:12:34)
     SW01 - Desktop Environments
 	--cmd SW0101 - Install XFCE desktop
 	--cmd SW0102 - Install Gnome desktop
@@ -164,27 +146,6 @@ Outputs:
     --cmd SW04 - Install system updates
   --cmd Help - About this app
 ~~~
-
-## Legacy options
-Backward Compatible options.
-
-Use:
-~~~
-armbian-configng main=Help
-~~~
-
-Outputs:
-~~~
-Legacy Options (Backward Compatible)
-Please use 'armbian-configng --help' for more information.
-
-Usage:  armbian-configng main=[arguments] selection=[options]
-
-    armbian-configng main=System selection=Headers          -  Install headers:                                        
-    armbian-configng main=System selection=Headers_remove   -  Remove headers:                                 
-~~~
-
-***
 
 ## Development
 
@@ -317,9 +278,9 @@ Jobs:
 manage_dtoverlays
 ~~~
 
-### N01.1
+### N01
 
-Configure network interfaces
+Configure network interfaces using Netplan
 
 Jobs:
 
@@ -327,7 +288,17 @@ Jobs:
 No commands available
 ~~~
 
-### N15
+### N02
+
+Configure network interfaces using NetworkManager
+
+Jobs:
+
+~~~
+nmtui-connect
+~~~
+
+### N03
 
 Install Bluetooth support
 
@@ -339,7 +310,7 @@ debconf-apt-progress -- apt-get -y install bluetooth bluez bluez-tools
 check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y --no-install-recommends install pulseaudio-module-bluetooth blueman
 ~~~
 
-### N16
+### N04
 
 Remove Bluetooth support
 
@@ -352,7 +323,7 @@ check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y remove pul
 debconf-apt-progress -- apt -y -qq autoremove
 ~~~
 
-### N17
+### N05
 
 Bluetooth Discover
 
@@ -362,7 +333,7 @@ Jobs:
 connect_bt_interface
 ~~~
 
-### N18
+### N06
 
 Toggle system IPv6/IPv4 internet protocol
 
@@ -372,9 +343,9 @@ Jobs:
 toggle_ipv6 | show_infobox
 ~~~
 
-### L00
+### L01
 
-Change Global timezone (WIP)
+Change Global timezone
 
 Jobs:
 
@@ -382,7 +353,7 @@ Jobs:
 dpkg-reconfigure tzdata
 ~~~
 
-### L01
+### L02
 
 Change Locales reconfigure the language and character set
 
@@ -394,7 +365,7 @@ source /etc/default/locale ; sed -i "s/^LANGUAGE=.*/LANGUAGE=$LANG/" /etc/defaul
 export LANGUAGE=$LANG
 ~~~
 
-### L02
+### L03
 
 Change Keyboard layout
 
@@ -403,16 +374,6 @@ Jobs:
 ~~~
 dpkg-reconfigure keyboard-configuration ; setupcon 
 update-initramfs -u
-~~~
-
-### L03
-
-Change APT mirrors
-
-Jobs:
-
-~~~
-get_user_continue "This is only a frontend test" process_input
 ~~~
 
 ### SW01
@@ -482,8 +443,8 @@ These helper functions facilitate various operations related to job management, 
 | Needed by generate_menu |  | Joey Turner 
 | Display a Yes/No dialog box and process continue/exit | get_user_continue 'Do you wish to continue?' process_input | Joey Turner 
 | Display a menu a given list of options with a provided prompt | generic_select "true false" "Select an option" | Gunjan Gupta 
-| Display a message box | show_message <<< 'hello world'  | Joey Turner 
 | Migrated procedures from Armbian config. | connect_bt_interface | Igor Pecovnik 
+| Display a message box | show_message <<< 'hello world'  | Joey Turner 
 | Menu for armbianmonitor features | see_monitoring | Joey Turner 
 | Enable/disable device tree overlays | manage_dtoverlays | Gunjan Gupta 
 | Show or generate QR code for Google OTP | qr_code generate | Igor Pecovnik 
@@ -524,15 +485,6 @@ These helper functions facilitate various operations related to job management, 
 
 
 <details>
-<summary><b>Runtime / Board Statuses</b></summary>
-
-(WIP)
-
-This section outlines the runtime environment to check configurations and statuses for dynamically managing jobs based on JSON data.
-
-(WIP)
-
-</details>
 
 
 ## Testing and contributing
@@ -548,23 +500,9 @@ sudo apt install git jq whiptail
 Get Development and contribute:
 ~~~
 {
-    git clone https://github.com/armbian/configng
+    git clone https://github.com/khadas/fenix-config -b configng configng
     cd configng
-    ./armbian-configng --help
-}
-~~~
-
-Install and test Development deb:
-~~~
-{
-    sudo apt install whiptail
-    latest_release=$(curl -s https://api.github.com/repos/armbian/configng/releases/latest)
-    deb_url=$(echo "$latest_release" | jq -r '.assets[] | select(.name | endswith(".deb")) | .browser_download_url')
-    curl -LO "$deb_url"
-    deb_file=$(echo "$deb_url" | awk -F"/" '{print $NF}')
-    sudo dpkg -i "$deb_file"
-    sudo dpkg --configure -a
-    sudo apt --fix-broken install
+    ./fenix-config --help
 }
 ~~~
 
