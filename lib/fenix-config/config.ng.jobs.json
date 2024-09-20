@@ -52,7 +52,7 @@
           "doc_link": "https://github.com/armbian/config/wiki#System",
           "src_reference": "https://github.com/armbian/config/blob/master/debian-config-jobs#L160",
           "author": "https://github.com/Tearran",
-          "condition": "! are_headers_installed"
+          "condition": "! are_headers_installed && [ -f /etc/apt/sources.list.d/fenix.list ]"
         },
         {
           "id": "S05",
@@ -415,7 +415,7 @@
           "doc_link": "",
           "src_reference": "",
           "author": "",
-          "condition": "check_if_installed network-manager && ! check_if_installed netplan.io"
+          "condition": "check_if_installed network-manager"
         },
         {
           "id": "N02",
