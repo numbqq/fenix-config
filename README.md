@@ -1,6 +1,6 @@
 
 # Fenix Configuration Utility
-Updated: Fri Sep 20 06:18:35 AM UTC 2024
+Updated: Fri Sep 20 09:25:00 AM UTC 2024
 
 Utility for configuring your board, adjusting services, and installing applications. It comes with Fenix by default.
 
@@ -104,7 +104,7 @@ Outputs:
     --cmd L02 - Change Locales reconfigure the language and character set
     --cmd L03 - Change Keyboard layout
 
-  Software - Run/Install 3rd party applications (01:21:33)
+  Software - Run/Install 3rd party applications (02:19:45)
     SW01 - Desktop Environments
 	--cmd SW0101 - Install XFCE desktop
 	--cmd SW0102 - Install Gnome desktop
@@ -408,12 +408,12 @@ These helper functions facilitate various operations related to job management, 
 | Remove Linux headers | headers_remove | Joey Turner 
 | Display a menu from pipe | show_menu <<< armbianmonitor -h  ;  | Joey Turner 
 | Install kernel headers | headers_install | Joey Turner 
-| Migrated procedures from Armbian config. | is_package_manager_running | Igor Pecovnik 
-| Migrated procedures from Armbian config. | check_desktop | Igor Pecovnik 
+| Check if package manager is already running in the background | is_package_manager_running | Igor Pecovnik 
+| Check if a desktop manager is installed. | check_desktop | Igor Pecovnik 
 | Generate Document files. | generate_readme | Joey Turner 
 | freeze/unhold/reinstall kernel & bsp related packages. | fw_manipulate unhold|freeze|reinstall | Igor Pecovnik 
 | Needed by generate_menu |  | Joey Turner 
-| Display a Yes/No dialog box and process continue/exit | get_user_continue 'Do you wish to continue?' process_input | Joey Turner 
+| Display a Yes/No dialog box. Returns 0 or 1 depending on the user choice | get_user_continue 'Do you wish to continue?' | Joey Turner 
 | Display a menu a given list of options with a provided prompt | generic_select "true false" "Select an option" | Gunjan Gupta 
 | Migrated procedures from Armbian config. | connect_bt_interface | Igor Pecovnik 
 | Display a message box | show_message <<< 'hello world'  | Joey Turner 
@@ -422,7 +422,7 @@ These helper functions facilitate various operations related to job management, 
 | Show or generate QR code for Google OTP | qr_code generate | Igor Pecovnik 
 | Check if kernel headers are installed | are_headers_installed | Gunjan Gupta 
 | Check when apt list was last updated | see_current_apt | Joey Turner 
-| Migrated procedures from Armbian config. | check_if_installed nano | Igor Pecovnik 
+| Check if a given package is installed | check_if_installed nano | Igor Pecovnik 
 | Generate 'Armbian CPU logo' SVG for document file. | generate_svg | Joey Turner 
 | Displays available adapters | choose_adapter | Igor Pecovnik 
 | Update submenu descriptions based on conditions | update_submenu_data | Joey Turner 
@@ -450,7 +450,6 @@ These helper functions facilitate various operations related to job management, 
 | Check the internet connection with fallback DNS | see_ping | Joey Turner 
 | Update the /etc/skel files in users directories | update_skel | Igor Pecovnik 
 | Set Armbian to stable release | set_stable | Tearran 
-| Secure version of get_user_continue | get_user_continue_secure 'Do you wish to continue?' process_input | Joey Turner 
 
 
 </details>
