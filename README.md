@@ -1,6 +1,6 @@
 
 # Fenix Configuration Utility
-Updated: Fri Sep 20 03:47:13 AM UTC 2024
+Updated: Fri Sep 20 06:18:35 AM UTC 2024
 
 Utility for configuring your board, adjusting services, and installing applications. It comes with Fenix by default.
 
@@ -25,12 +25,11 @@ sudo fenix-config
 
 
 - ## **Network** 
-  - **N01** - Configure network interfaces using Netplan
-  - **N02** - Configure network interfaces using NetworkManager
-  - **N03** - Install Bluetooth support
-  - **N04** - Remove Bluetooth support
-  - **N05** - Bluetooth Discover
-  - **N06** - Toggle system IPv6/IPv4 internet protocol
+  - **N01** - Configure network interfaces
+  - **N02** - Install Bluetooth support
+  - **N03** - Remove Bluetooth support
+  - **N04** - Bluetooth Discover
+  - **N05** - Toggle system IPv6/IPv4 internet protocol
 
 
 - ## **Localisation** 
@@ -94,35 +93,18 @@ Outputs:
     --cmd S12 - Manage device tree overlays
 
   Network - Fixed and wireless network settings (wlan0)
-    N01 - Configure network interfaces using Netplan
-      N0101 - Wired
-	--cmd N010101 - Show configuration
-	--cmd N010102 - Enable DHCP on all interfaces
-	--cmd N010103 - Set fixed IP address
-	--cmd N010104 - Disable IPV6
-	--cmd N010105 - Enable IPV6
-	--cmd N010106 - Disable wired networking
-      N0102 - Wireless
-	--cmd N010201 - Show configuration
-	--cmd N010202 - Disable wireless networking
-	--cmd N010203 - Disable IPV6
-	--cmd N010204 - Enable IPV6
-	--cmd N010205 - Enable DHCP on wireless network interface
-	--cmd N0103 - Show common configs
-	--cmd N0104 - Apply common configs
-	--cmd N0105 - Display status
-    --cmd N02 - Configure network interfaces using NetworkManager
-    --cmd N03 - Install Bluetooth support
-    --cmd N04 - Remove Bluetooth support
-    --cmd N05 - Bluetooth Discover
-    --cmd N06 - Toggle system IPv6/IPv4 internet protocol
+    --cmd N01 - Configure network interfaces
+    --cmd N02 - Install Bluetooth support
+    --cmd N03 - Remove Bluetooth support
+    --cmd N04 - Bluetooth Discover
+    --cmd N05 - Toggle system IPv6/IPv4 internet protocol
 
   Localisation - Localisation (en_US.UTF-8)
     --cmd L01 - Change Global timezone
     --cmd L02 - Change Locales reconfigure the language and character set
     --cmd L03 - Change Keyboard layout
 
-  Software - Run/Install 3rd party applications (02:12:34)
+  Software - Run/Install 3rd party applications (01:21:33)
     SW01 - Desktop Environments
 	--cmd SW0101 - Install XFCE desktop
 	--cmd SW0102 - Install Gnome desktop
@@ -280,17 +262,7 @@ manage_dtoverlays
 
 ### N01
 
-Configure network interfaces using Netplan
-
-Jobs:
-
-~~~
-No commands available
-~~~
-
-### N02
-
-Configure network interfaces using NetworkManager
+Configure network interfaces
 
 Jobs:
 
@@ -298,7 +270,7 @@ Jobs:
 nmtui-connect
 ~~~
 
-### N03
+### N02
 
 Install Bluetooth support
 
@@ -310,7 +282,7 @@ debconf-apt-progress -- apt-get -y install bluetooth bluez bluez-tools
 check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y --no-install-recommends install pulseaudio-module-bluetooth blueman
 ~~~
 
-### N04
+### N03
 
 Remove Bluetooth support
 
@@ -323,7 +295,7 @@ check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y remove pul
 debconf-apt-progress -- apt -y -qq autoremove
 ~~~
 
-### N05
+### N04
 
 Bluetooth Discover
 
@@ -333,7 +305,7 @@ Jobs:
 connect_bt_interface
 ~~~
 
-### N06
+### N05
 
 Toggle system IPv6/IPv4 internet protocol
 
@@ -500,8 +472,8 @@ sudo apt install git jq whiptail
 Get Development and contribute:
 ~~~
 {
-    git clone https://github.com/khadas/fenix-config -b configng configng
-    cd configng
+    git clone https://github.com/khadas/fenix-config -b configng
+    cd fenix-config
     ./fenix-config --help
 }
 ~~~

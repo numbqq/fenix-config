@@ -93,8 +93,8 @@ sudo apt install git jq whiptail
 Get Development and contribute:
 ~~~
 {
-    git clone https://github.com/khadas/fenix-config -b configng configng
-    cd configng
+    git clone https://github.com/khadas/fenix-config -b configng
+    cd fenix-config
     ./${script_name} --help
 }
 ~~~
