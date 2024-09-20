@@ -7,7 +7,7 @@ module_options+=(
 ["check_desktop,author"]="Igor Pecovnik"
 ["check_desktop,ref_link"]=""
 ["check_desktop,feature"]="check_desktop"
-["check_desktop,desc"]="Migrated procedures from Armbian config."
+["check_desktop,desc"]="Check if a desktop manager is installed."
 ["check_desktop,example"]="check_desktop"
 ["check_desktop,status"]="Active"
 ["check_desktop,doc_link"]=""
@@ -32,7 +32,7 @@ module_options+=(
 ["check_if_installed,author"]="Igor Pecovnik"
 ["check_if_installed,ref_link"]=""
 ["check_if_installed,feature"]="check_if_installed"
-["check_if_installed,desc"]="Migrated procedures from Armbian config."
+["check_if_installed,desc"]="Check if a given package is installed"
 ["check_if_installed,example"]="check_if_installed nano"
 ["check_if_installed,status"]="Active"
 )
@@ -108,7 +108,7 @@ module_options+=(
 ["is_package_manager_running,author"]="Igor Pecovnik"
 ["is_package_manager_running,ref_link"]=""
 ["is_package_manager_running,feature"]="is_package_manager_running"
-["is_package_manager_running,desc"]="Migrated procedures from Armbian config."
+["is_package_manager_running,desc"]="Check if package manager is already running in the background"
 ["is_package_manager_running,example"]="is_package_manager_running"
 ["is_package_manager_running,status"]="Active"
 )
@@ -443,7 +443,9 @@ function execute_command() {
 
     # If a prompt exists, display it and wait for user confirmation
     if [[ "$prompt" != "null" && $INPUTMODE != "cmd" ]]; then
-        get_user_continue "$prompt" process_input
+        if ! get_user_continue "$prompt"; then
+            return
+        fi
     fi
 
     # Execute each command
@@ -593,8 +595,8 @@ module_options+=(
 ["get_user_continue,author"]="Joey Turner"
 ["get_user_continue,ref_link"]=""
 ["get_user_continue,feature"]="get_user_continue"
-["get_user_continue,desc"]="Display a Yes/No dialog box and process continue/exit"
-["get_user_continue,example"]="get_user_continue 'Do you wish to continue?' process_input"
+["get_user_continue,desc"]="Display a Yes/No dialog box. Returns 0 or 1 depending on the user choice"
+["get_user_continue,example"]="get_user_continue 'Do you wish to continue?'"
 ["get_user_continue,doc_link"]=""
 ["get_user_continue,status"]="Active"
 )
@@ -606,73 +608,11 @@ function get_user_continue() {
     local next_action="$2"
 
     if $($DIALOG --yesno "$message" 10 80 3>&1 1>&2 2>&3); then
-        $next_action
+        return 0
     else
-        $next_action "No"
+        return 1
     fi
 }
-
-
-menu_options+=(
-["get_user_continue,author"]="Joey Turner"
-["get_user_continue,ref_link"]=""
-["get_user_continue,feature"]="process_input"
-["get_user_continue,desc"]="used to process the user's choice paired with get_user_continue"
-["get_user_continue,example"]="get_user_continue 'Do you wish to continue?' process_input"
-["get_user_continue,status"]="Active"
-["get_user_continue,doc_link"]=""
-)
-#
-# Function to process the user's choice paired with get_user_continue
-#
-function process_input() {
-    local input="$1"
-    if [ "$input" = "No" ]; then
-        exit 1
-   fi
-}
-
-
-module_options+=(
-["get_user_continue_secure,author"]="Joey Turner"
-["get_user_continue_secure,ref_link"]=""
-["get_user_continue_secure,feature"]="get_user_continue_secure"
-["get_user_continue_secure,desc"]="Secure version of get_user_continue"
-["get_user_continue_secure,example"]="get_user_continue_secure 'Do you wish to continue?' process_input"
-["get_user_continue_secure,doc_link"]=""
-["get_user_continue_secure,status"]="Active"
-)
-#
-# Secure version of get_user_continue
-#
-function get_user_continue_secure() {
-    local message="$1"
-    local next_action="$2"
-
-    # Define a list of allowed functions
-    local allowed_functions=("process_input" "other_function")
-    # Check if the next_action is in the list of allowed functions
-    found=0
-    for func in "${allowed_functions[@]}"; do
-        if [[ "$func" == "$next_action" ]]; then
-            found=1
-            break
-        fi
-    done
-
-    if [[ "$found" -eq 1 ]]; then
-        if $($DIALOG --yesno "$message" 10 80 3>&1 1>&2 2>&3); then
-            $next_action
-        else
-            $next_action "No"
-        fi
-    else
-        echo "Error: Invalid function"
-        
-        exit 1
-    fi
-}
-
 
 
 module_options+=(
