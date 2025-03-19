@@ -1,6 +1,6 @@
 
 # Fenix Configuration Utility
-Updated: Fri Sep 20 09:25:00 AM UTC 2024
+Updated: Wed Mar 19 16:00:56 UTC 2025
 
 Utility for configuring your board, adjusting services, and installing applications. It comes with Fenix by default.
 
@@ -42,7 +42,9 @@ sudo fenix-config
   - **SW01** - Desktop Environments
   - **SW02** - Network tools
   - **SW03** - Development tools
-  - **SW04** - Install system updates
+  - **SW04** - Media Servers and Editors
+  - **SW05** - Remote Management tools
+  - **SW06** - Install system updates
 
 
 - ## **Help** 
@@ -99,12 +101,12 @@ Outputs:
     --cmd N04 - Bluetooth Discover
     --cmd N05 - Toggle system IPv6/IPv4 internet protocol
 
-  Localisation - Localisation (en_US.UTF-8)
+  Localisation - Localisation (C.UTF-8)
     --cmd L01 - Change Global timezone
     --cmd L02 - Change Locales reconfigure the language and character set
     --cmd L03 - Change Keyboard layout
 
-  Software - Run/Install 3rd party applications (02:19:45)
+  Software - Run/Install 3rd party applications (00:57:00)
     SW01 - Desktop Environments
 	--cmd SW0101 - Install XFCE desktop
 	--cmd SW0102 - Install Gnome desktop
@@ -125,7 +127,18 @@ Outputs:
 	--cmd SW0302 - Remove tools for cloning and managing repositories (git)
 	--cmd SW0303 - Install Docker
 	--cmd SW0304 - Remove Docker
-    --cmd SW04 - Install system updates
+	--cmd SW0305 - Purge all Docker images, containers, and volumes
+    SW04 - Media Servers and Editors
+	--cmd SW0401 - Install Plex Media server
+	--cmd SW0402 - Remove Plex Media server
+	--cmd SW0403 - Install Emby server
+	--cmd SW0404 - Remove Emby server
+    SW05 - Remote Management tools
+	--cmd SW0501 - Install Cockpit web-based management tool
+	--cmd SW0502 - Purge Cockpit web-based management tool
+	--cmd SW0503 - Start Cockpit Service
+	--cmd SW0504 - Stop Cockpit Service
+    --cmd SW06 - Install system updates
   --cmd Help - About this app
 ~~~
 
@@ -380,6 +393,26 @@ No commands available
 
 ### SW04
 
+Media Servers and Editors
+
+Jobs:
+
+~~~
+No commands available
+~~~
+
+### SW05
+
+Remote Management tools
+
+Jobs:
+
+~~~
+No commands available
+~~~
+
+### SW06
+
 Install system updates
 
 Jobs:
@@ -399,7 +432,6 @@ These helper functions facilitate various operations related to job management, 
 
 | Description | Example | Credit |
 |:----------- | ------- |:------:|
-| Wrapping Netplan commands | netplan_wrapper | Igor Pecovnik 
 | Generate a Help message legacy cli commands. | see_cli_legacy | Joey Turner 
 | Run time variables Migrated procedures from Armbian config. | set_runtime_variables | Igor Pecovnik 
 | Set Armbian to rolling release | set_rolling | Tearran 
@@ -424,7 +456,6 @@ These helper functions facilitate various operations related to job management, 
 | Check when apt list was last updated | see_current_apt | Joey Turner 
 | Check if a given package is installed | check_if_installed nano | Igor Pecovnik 
 | Generate 'Armbian CPU logo' SVG for document file. | generate_svg | Joey Turner 
-| Displays available adapters | choose_adapter | Igor Pecovnik 
 | Update submenu descriptions based on conditions | update_submenu_data | Joey Turner 
 | sanitize input cli | sanitize_input |  
 | Check if a domain is reachable via IPv4 and IPv6 | check_ip_version google.com | Joey Turner 
@@ -432,10 +463,11 @@ These helper functions facilitate various operations related to job management, 
 | Install docker | install_docker | Gunjan Gupta 
 | Generate a markdown list json objects using jq. | see_jq_menu_list | Joey Turner 
 | Generate jobs from JSON file. | generate_jobs_from_json | Joey Turner 
-| Set up a WiFi hotspot on the device | hotspot_setup | Joey Turner 
 | Toggle IPv6 on or off | toggle_ipv6 | Joey Turner 
 | Generate JSON-like object file. | generate_json | Joey Turner 
 | Install DE | install_de | Igor Pecovnik 
+| Install wrapper | apt_install_wrapper apt-get -y purge armbian-zsh | igorpecovnik 
+| Netplan wrapper | network_config | Igor Pecovnik 
 | Change the background color of the terminal or dialog box | set_colors 0-7 | Joey Turner 
 | Serve the edit and debug server. | serve_doc | Joey Turner 
 | Update JSON data with system information | update_json_data | Joey Turner 
@@ -445,10 +477,10 @@ These helper functions facilitate various operations related to job management, 
 | Show the usage of the functions. | see_use | Joey Turner 
 | Set cpufreq options like minimum/maximum speed and governor | set_cpufreq_option MIN_SPEED|MAX_SPEED|GOVERNOR | Gunjan Gupta 
 | Set fan control options | set_fan_controls [mode|level] | Gunjan Gupta 
-| List and connect to wireless network | wifi_connect | Igor Pecovnik 
 | Generate a Help message for cli commands. | see_cmd_list [catagory] | Joey Turner 
+| Revert network config back to Armbian defaults | default_network_config | Igor Pecovnik 
 | Check the internet connection with fallback DNS | see_ping | Joey Turner 
-| Update the /etc/skel files in users directories | update_skel | Igor Pecovnik 
+| Download a embyserver deb file from a URL and install using apt | install_embyserver | Kat Schwarz 
 | Set Armbian to stable release | set_stable | Tearran 
 
 
