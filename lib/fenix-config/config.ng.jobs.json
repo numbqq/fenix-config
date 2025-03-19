@@ -756,11 +756,142 @@
               "src_reference": "",
               "author": "",
               "condition": "check_if_installed docker-ce || check_if_installed docker.io"
+            },
+            {
+                "id": "SW0305",
+                "description": "Purge all Docker images, containers, and volumes",
+                "prompt": "This operation will delete all Docker images, containers, and volumes.\nWould you like to continue?",
+                "command": [
+                    "rm -rf /var/lib/docker",
+                    "rm -rf /var/lib/containerd"
+                ],
+                "status": "Preview",
+                "doc_link": "",
+                "src_reference": "",
+                "author": "",
+                "condition": "! check_if_installed docker-ce && ! check_if_installed docker.io && [ -d /var/lib/docker ]"
             }
           ]
         },
         {
-          "id": "SW04",
+            "id": "SW04",
+            "description": "Media Servers and Editors",
+            "sub": [
+                {
+                    "id": "SW0401",
+                    "description": "Install Plex Media server",
+                    "prompt": "This operation will install Plex Media server.\nWould you like to continue?",
+                    "command": [
+                        "install_plexmediaserver"
+                    ],
+                    "status": "Preview",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "! check_if_installed plexmediaserver"
+                },
+                {
+                    "id": "SW0402",
+                    "description": "Remove Plex Media server",
+                    "prompt": "This operation will purge Plex Media server.\nWould you like to continue?",
+                    "command": [
+                        "apt_install_wrapper apt-get -y purge plexmediaserver",
+                        "sed -i '/plexmediaserver.gpg/s/^/#/g' /etc/apt/sources.list.d/plexmediaserver.list"
+                    ],
+                    "status": "Preview",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "check_if_installed plexmediaserver"
+                },
+                {
+                    "id": "SW0403",
+                    "description": "Install Emby server",
+                    "prompt": "This operation will install Emby server.\nWould you like to continue?",
+                    "command": [
+                        "install_embyserver"
+                    ],
+                    "status": "Preview",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "! check_if_installed emby-server"
+                },
+                {
+                    "id": "SW0404",
+                    "description": "Remove Emby server",
+                    "prompt": "This operation will purge Emby server.\nWould you like to continue?",
+                    "command": [
+                        "apt_install_wrapper apt -y purge emby-server"
+                    ],
+                    "status": "Preview",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "check_if_installed emby-server"
+                }
+            ]
+        },
+        {
+            "id": "SW05",
+            "description": "Remote Management tools",
+            "sub": [
+                {
+                    "id": "SW0501",
+                    "description": "Install Cockpit web-based management tool",
+                    "prompt": "This operation will install Cockpit.\ncockpit cockpit-ws cockpit-system cockpit-storaged\nWould you like to continue?",
+                    "command": [
+                        "see_current_apt update",
+                        "apt_install_wrapper apt -y install cockpit cockpit-ws cockpit-system cockpit-storaged "
+                    ],
+                    "status": "Preview",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "! check_if_installed cockpit"
+                },
+                {
+                    "id": "SW0502",
+                    "description": "Purge Cockpit web-based management tool",
+                    "prompt": "This operation will purge Cockpit.\nWould you like to continue?",
+                    "command": [
+                        "apt_install_wrapper apt -y purge cockpit"
+                    ],
+                    "status": "Preview",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "check_if_installed cockpit"
+                },
+                {
+                    "id": "SW0503",
+                    "description": "Start Cockpit Service",
+                    "command": [
+                        "sudo systemctl enable --now cockpit.socket | show_infobox "
+                    ],
+                    "status": "Preview",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "check_if_installed cockpit && ! systemctl is-enabled cockpit.socket > /dev/null 2>&1"
+                },
+                {
+                    "id": "SW0504",
+                    "description": "Stop Cockpit Service",
+                    "command": [
+                        "systemctl stop cockpit cockpit.socket",
+                        "systemctl disable cockpit.socket | show_infobox "
+                    ],
+                    "status": "Preview",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "check_if_installed cockpit && systemctl is-enabled cockpit.socket > /dev/null 2>&1"
+                }
+            ]
+        },
+        {
+          "id": "SW06",
           "description": "Install system updates",
           "prompt": "This will install updates from the apt repository\nWould you like to continue?",
           "command": [

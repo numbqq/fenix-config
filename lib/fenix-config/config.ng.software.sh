@@ -22,6 +22,53 @@ function see_monitoring() {
 }
 
 module_options+=(
+	["update_skel,author"]="Kat Schwarz"
+	["update_skel,ref_link"]=""
+	["update_skel,feature"]="install_plexmediaserver"
+	["update_skel,desc"]="Install plexmediaserver from repo using apt"
+	["update_skel,example"]="install_plexmediaserver"
+	["update_skel,status"]="Active"
+)
+#
+# Install plexmediaserver using apt
+#
+install_plexmediaserver() {
+	if [ ! -f /etc/apt/sources.list.d/plexmediaserver.list ]; then
+		echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/plexmediaserver.gpg] https://downloads.plex.tv/repo/deb public main" | sudo tee /etc/apt/sources.list.d/plexmediaserver.list > /dev/null 2>&1
+	else
+		sed -i "/downloads.plex.tv/s/^#//g" /etc/apt/sources.list.d/plexmediaserver.list > /dev/null 2>&1
+	fi
+	# Note: for compatibility with existing source file in some builds format must be gpg not asc
+	# and location must be /usr/share/keyrings
+	wget -qO- https://downloads.plex.tv/plex-keys/PlexSign.key | gpg --dearmor | sudo tee /usr/share/keyrings/plexmediaserver.gpg > /dev/null 2>&1
+	apt_install_wrapper apt-get update
+	apt_install_wrapper apt-get -y install plexmediaserver
+	whiptail --msgbox "To test that Plex Media Server has installed successfully\nIn a web browser go to http://localhost:32400/web or \nhttp://127.0.0.1:32400/web on this computer." 9 70
+}
+
+module_options+=(
+	["update_skel,author"]="Kat Schwarz"
+	["update_skel,ref_link"]=""
+	["update_skel,feature"]="install_embyserver"
+	["update_skel,desc"]="Download a embyserver deb file from a URL and install using apt"
+	["update_skel,example"]="install_embyserver"
+	["update_skel,status"]="Active"
+)
+#
+# Download a deb file from a URL and install using wget and apt with dialog progress bars
+#
+install_embyserver() {
+	URL=$(curl -s https://api.github.com/repos/MediaBrowser/Emby.Releases/releases/latest |
+		grep "/emby-server-deb.*$(dpkg --print-architecture).deb" | cut -d : -f 2,3 | tr -d '"')
+	cd ~/
+	wget -O "/tmp/emby-server.deb" $URL 2>&1 | stdbuf -oL awk '/[.] +[0-9][0-9]?[0-9]?%/ { print substr($0,63,3) }' |
+		whiptail --gauge "Please wait\nDownloading ${URL##*/}" 8 70 0
+	apt_install_wrapper apt-get -y install /tmp/emby-server.deb
+	rm /tmp/emby-server.deb
+	whiptail --msgbox "To test that Emby Server has installed successfully\nIn a web browser go to http://localhost:8096 or \nhttp://127.0.0.1:8096 on this computer." 9 70
+}
+
+module_options+=(
 	["install_docker,author"]="Gunjan Gupta"
 	["install_docker,ref_link"]=""
 	["install_docker,feature"]="install docker"
