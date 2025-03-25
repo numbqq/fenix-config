@@ -116,3 +116,24 @@ remove_docker() {
 		debconf-apt-progress -- apt-get autoremove --purge -y docker.io
 	fi
 }
+
+module_options+=(
+	["remove_docker,author"]="Gunjan Gupta"
+	["remove_docker,ref_link"]=""
+	["remove_docker,feature"]="widevine"
+	["remove_docker,desc"]="Install Widevine CDM"
+	["remove_docker,example"]="install_widevine"
+	["remove_docker,status"]="review"
+	["remove_docker,doc_link"]=""
+)
+#
+# @decription remove docker
+#
+install_widevine(){
+	local widevine_version="4.10.2662.3+1"
+	wget -P /tmp https://archive.raspberrypi.org/debian/pool/main/w/widevine/widevine_${widevine_version}.tar.xz
+	tar xf /tmp/widevine_${widevine_version}.tar.xz --strip-components=1 -C / --wildcards 'widevine-*/opt'
+	mkdir /opt/WidevineCdm/gmp-widevinecdm
+	ln -sf ../../_platform_specific/linux_arm64 /opt/WidevineCdm/gmp-widevinecdm/latest
+	ln -sf /opt/WidevineCdm /usr/lib/chromium/WidevineCdm
+}

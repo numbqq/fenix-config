@@ -521,77 +521,10 @@
       "sub": [
         {
           "id": "SW01",
-          "description": "Desktop Environments",
-          "sub": [
-            {
-              "id": "SW0101",
-              "description": "Install XFCE desktop",
-              "command": [
-                "install_de \"xfce\""
-              ],
-              "status": "Active",
-              "doc_link": "",
-              "src_reference": "",
-              "author": "",
-              "condition": ""
-            },
-            {
-              "id": "SW0102",
-              "description": "Install Gnome desktop",
-              "command": [
-                "install_de \"gnome\""
-              ],
-              "status": "Active",
-              "doc_link": "",
-              "src_reference": "",
-              "author": "",
-              "condition": ""
-            },
-            {
-              "id": "SW0103",
-              "description": "Install i3-wm desktop",
-              "command": [
-                "install_de \"i3-wm\""
-              ],
-              "status": "Active",
-              "doc_link": "",
-              "src_reference": "",
-              "author": "",
-              "condition": ""
-            },
-            {
-              "id": "SW0104",
-              "description": "Install Cinnamon desktop",
-              "command": [
-                "install_de \"cinnamon\""
-              ],
-              "status": "Active",
-              "doc_link": "",
-              "src_reference": "",
-              "author": "",
-              "condition": ""
-            },
-            {
-              "id": "SW0105",
-              "description": "Install kde-neon desktop",
-              "command": [
-                "install_de \"kde-neon\""
-              ],
-              "status": "Active",
-              "doc_link": "",
-              "src_reference": "",
-              "author": "",
-              "condition": ""
-            }
-          ],
-          "condition": "[ -f /etc/apt/sources.list.d/armbian.list ]"
-        },
-        {
-          "id": "SW02",
           "description": "Network tools",
           "sub": [
             {
-              "id": "SW0201",
+              "id": "SW0101",
               "description": "Install realtime console network usage monitor (nload)",
               "prompt": "This operation will install nload.\n\nDo you wish to continue?",
               "command": [
@@ -604,7 +537,7 @@
               "condition": "! check_if_installed nload"
             },
             {
-              "id": "SW0202",
+              "id": "SW0102",
               "description": "Remove realtime console network usage monitor (nload)",
               "prompt": "This operation will purge nload.\n\nDo you wish to continue?",
               "command": [
@@ -617,7 +550,7 @@
               "condition": "check_if_installed nload"
             },
             {
-              "id": "SW0203",
+              "id": "SW0103",
               "description": "Install bandwidth measuring tool (iperf3)",
               "prompt": "This operation will install iperf3.\n\nDo you wish to continue?",
               "command": [
@@ -630,7 +563,7 @@
               "condition": "! check_if_installed iperf3"
             },
             {
-              "id": "SW0204",
+              "id": "SW0104",
               "description": "Remove bandwidth measuring tool (iperf3)",
               "prompt": "This operation will purge iperf3.\n\nDo you wish to continue?",
               "command": [
@@ -643,7 +576,7 @@
               "condition": "check_if_installed iperf3"
             },
             {
-              "id": "SW0205",
+              "id": "SW0105",
               "description": "Install IP LAN monitor (iptraf-ng)",
               "prompt": "This operation will install iptraf-ng.\n\nDo you wish to continue?",
               "command": [
@@ -656,7 +589,7 @@
               "condition": "! check_if_installed iptraf-ng"
             },
             {
-              "id": "SW0206",
+              "id": "SW0106",
               "description": "Remove IP LAN monitor (iptraf-ng)",
               "prompt": "This operation will purge nload.\n\nDo you wish to continue?",
               "command": [
@@ -669,7 +602,7 @@
               "condition": "check_if_installed iptraf-ng"
             },
             {
-              "id": "SW0207",
+              "id": "SW0107",
               "description": "Install hostname broadcast via mDNS (avahi-daemon)",
               "prompt": "This operation will install avahi-daemon and add configuration files.\nDo you wish to continue?",
               "command": [
@@ -686,7 +619,7 @@
               "condition": "! check_if_installed avahi-daemon"
             },
             {
-              "id": "SW0208",
+              "id": "SW0108",
               "description": "Remove hostname broadcast via mDNS (avahi-daemon)",
               "prompt": "This operation will purge avahi-daemon \nDo you wish to continue?",
               "command": [
@@ -703,11 +636,11 @@
           ]
         },
         {
-          "id": "SW03",
+          "id": "SW02",
           "description": "Development tools",
           "sub": [
             {
-              "id": "SW0301",
+              "id": "SW0201",
               "description": "Install tools for cloning and managing repositories (git)",
               "prompt": "This operation will install git.\n\nDo you wish to continue?",
               "command": [
@@ -720,7 +653,7 @@
               "condition": "! check_if_installed git"
             },
             {
-              "id": "SW0302",
+              "id": "SW0202",
               "description": "Remove tools for cloning and managing repositories (git)",
               "prompt": "This operation will remove git.\n\nDo you wish to continue?",
               "command": [
@@ -745,7 +678,7 @@
               "condition": "! check_if_installed docker-ce && ! check_if_installed docker.io"
             },
             {
-              "id": "SW0304",
+              "id": "SW0204",
               "description": "Remove Docker",
               "prompt": "This will remove docker and its configuration\nWDo you wish to continue?",
               "command": [
@@ -758,7 +691,7 @@
               "condition": "check_if_installed docker-ce || check_if_installed docker.io"
             },
             {
-              "id": "SW0305",
+              "id": "SW0205",
               "description": "Purge all Docker images, containers, and volumes",
               "prompt": "This operation will delete all Docker images, containers, and volumes.\nWould you like to continue?",
               "command": [
@@ -774,11 +707,11 @@
           ]
         },
         {
-          "id": "SW04",
+          "id": "SW03",
           "description": "Media Servers and Editors",
           "sub": [
             {
-              "id": "SW0401",
+              "id": "SW0301",
               "description": "Install Plex Media server",
               "prompt": "This operation will install Plex Media server.\nWould you like to continue?",
               "command": [
@@ -791,7 +724,7 @@
               "condition": "! check_if_installed plexmediaserver"
             },
             {
-              "id": "SW0402",
+              "id": "SW0302",
               "description": "Remove Plex Media server",
               "prompt": "This operation will purge Plex Media server.\nWould you like to continue?",
               "command": [
@@ -805,7 +738,7 @@
               "condition": "check_if_installed plexmediaserver"
             },
             {
-              "id": "SW0403",
+              "id": "SW0303",
               "description": "Install Emby server",
               "prompt": "This operation will install Emby server.\nWould you like to continue?",
               "command": [
@@ -818,7 +751,7 @@
               "condition": "! check_if_installed emby-server"
             },
             {
-              "id": "SW0404",
+              "id": "SW0304",
               "description": "Remove Emby server",
               "prompt": "This operation will purge Emby server.\nWould you like to continue?",
               "command": [
@@ -833,11 +766,11 @@
           ]
         },
         {
-          "id": "SW05",
+          "id": "SW04",
           "description": "Remote Management tools",
           "sub": [
             {
-              "id": "SW0501",
+              "id": "SW0401",
               "description": "Install Cockpit web-based management tool",
               "prompt": "This operation will install Cockpit.\ncockpit cockpit-ws cockpit-system cockpit-storaged\nWould you like to continue?",
               "command": [
@@ -851,7 +784,7 @@
               "condition": "! check_if_installed cockpit"
             },
             {
-              "id": "SW0502",
+              "id": "SW0402",
               "description": "Purge Cockpit web-based management tool",
               "prompt": "This operation will purge Cockpit.\nWould you like to continue?",
               "command": [
@@ -864,7 +797,7 @@
               "condition": "check_if_installed cockpit"
             },
             {
-              "id": "SW0503",
+              "id": "SW0403",
               "description": "Start Cockpit Service",
               "command": [
                 "sudo systemctl enable --now cockpit.socket | show_infobox "
@@ -876,7 +809,7 @@
               "condition": "check_if_installed cockpit && ! systemctl is-enabled cockpit.socket > /dev/null 2>&1"
             },
             {
-              "id": "SW0504",
+              "id": "SW0404",
               "description": "Stop Cockpit Service",
               "command": [
                 "systemctl stop cockpit cockpit.socket",
@@ -887,6 +820,38 @@
               "src_reference": "",
               "author": "",
               "condition": "check_if_installed cockpit && systemctl is-enabled cockpit.socket > /dev/null 2>&1"
+            }
+          ]
+        },
+        {
+          "id": "SW05",
+          "description": "Widevine CDM",
+          "sub": [
+            {
+              "id": "SW0501",
+              "description": "Install Widevine CDM",
+              "prompt": "This operation will install Widevine CDM.\nWould you like to continue?",
+              "command": [
+                "install_widevine"
+              ],
+              "status": "Preview",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "[ ! -d /opt/WidevineCdm ]"
+            },
+            {
+              "id": "SW0502",
+              "description": "Remove Widevine CDM",
+              "prompt": "This operation will remove Widevine support.\nWould you like to continue?",
+              "command": [
+                "rm -rf /opt/WidevineCdm"
+              ],
+              "status": "Preview",
+              "doc_link": "",
+              "src_reference": "",
+              "author": "",
+              "condition": "[ -d /opt/WidevineCdm ]"
             }
           ]
         },
