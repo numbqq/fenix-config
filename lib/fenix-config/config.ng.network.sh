@@ -336,3 +336,126 @@ function connect_bt_interface() {
 	fi
 
 }
+
+module_options+=(
+	["see_ping,author"]="Gunjan Gupta"
+	["see_ping,ref_link"]=""
+	["see_ping,feature"]="access point"
+	["see_ping,desc"]="Enable access point backed by wifi or ethernet"
+	["see_ping,example"]="enable_ap [wlan0|eth0]"
+	["see_ping,doc_link"]=""
+	["see_ping,status"]="review"
+)
+#
+# Function to create access point
+#
+function enable_ap() {
+	local dnsmasq_config="/etc/dnsmasq.conf"
+	local hostapd_config="/etc/hostapd/hostapd.conf"
+	local resolved_config_dir="/etc/systemd/resolved.conf.d"
+
+	local ap_interface="wlan1"
+	local softap_ip="192.168.43.1"
+	local softap_ip_range="dhcp-range=192.168.43.2,192.168.43.254"
+	local backend_interface=$1
+
+	disable_ap
+
+	local ssid=""
+	while [ -z "$ssid" ]; do
+		if ! ssid=$($DIALOG --title "$TITLE" --inputbox "Please enter SSID" 7 50 3>&1 1>&2 2>&3); then
+			return 0
+		elif [ -z "$ssid" ]; then
+			$DIALOG --msgbox "SSID cannot be empty. Please try again." 7 50
+		fi
+	done
+
+	local password=""
+	while /bin/true; do
+		if ! password=$($DIALOG --title "$TITLE" --passwordbox "Please enter passphrase. Leave it empty if none." 7 50 3>&1 1>&2 2>&3); then
+			return 0
+		else
+			break
+		fi
+	done
+
+	sleep 2
+
+	ifconfig wlan1 $softap_ip netmask 255.255.255.0 up
+
+	cat > "$dnsmasq_config" <<-EOF
+	user=root
+	listen-address=$softap_ip
+	$softap_ip_range
+	server=/google/8.8.8.8
+	port=53
+	EOF
+
+	cat > "$hostapd_config" <<-EOF
+	interface=$ap_interface
+	ctrl_interface=/var/run/hostapd
+	driver=nl80211
+	ssid=$ssid
+	channel=6
+	hw_mode=g
+	ieee80211n=1
+	ignore_broadcast_ssid=0
+	EOF
+
+	if [ ! -z $password ]; then
+		cat >> "$hostapd_config" <<-EOF
+		auth_algs=1
+		wpa=2
+		wpa_passphrase=$password
+		wpa_key_mgmt=WPA-PSK
+		wpa_pairwise=TKIP
+		rsn_pairwise=CCMP
+		EOF
+	fi
+
+	[ -d $resolved_config_dir ] || mkdir $resolved_config_dir
+
+	cat > "$resolved_config_dir"/khadas_ap.conf <<-EOF
+	[Resolve]
+	DNS=127.0.0.1
+	DNSStubListener=no
+	EOF
+
+	systemctl reload-or-restart systemd-resolved
+
+	dnsmasq -C $dnsmasq_config --interface=$ap_interface
+	hostapd $hostapd_config -B
+
+	# Setup NAT
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	iptables -t nat -A POSTROUTING -o $backend_interface -j MASQUERADE
+	iptables -A FORWARD -i $ap_interface -o $backend_interface -j ACCEPT
+}
+
+module_options+=(
+	["see_ping,author"]="Gunjan Gupta"
+	["see_ping,ref_link"]=""
+	["see_ping,feature"]="access point"
+	["see_ping,desc"]="Disable access point"
+	["see_ping,example"]="disable_ap"
+	["see_ping,doc_link"]=""
+	["see_ping,status"]="review"
+)
+#
+# Function to create access point
+#
+function disable_ap() {
+	local resolved_config_dir="/etc/systemd/resolved.conf.d"
+	pidof -q dnsmasq && killall dnsmasq
+	pidof -q hostapd && killall hostapd
+
+	[ -f "$resolved_config_dir"/khadas_ap.conf ] && rm "$resolved_config_dir"/khadas_ap.conf
+	systemctl reload-or-restart systemd-resolved
+
+	for interface in eth0 wlan0; do
+		iptables -D FORWARD -i wlan1 -o $interface -j ACCEPT 2>/dev/null
+		iptables -t nat -D POSTROUTING -o $interface -j MASQUERADE 2>/dev/null
+	done
+
+	echo 0 > /proc/sys/net/ipv4/ip_forward
+}

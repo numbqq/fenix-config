@@ -419,6 +419,42 @@
         },
         {
           "id": "N02",
+          "description": "Create wifi access point (STA+AP)",
+          "command": [
+            "enable_ap wlan0"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "! pidof -q hostapd && nmcli connection show --active | grep -q wlan0"
+        },
+        {
+          "id": "N03",
+          "description": "Create wifi access point (ETH+AP)",
+          "command": [
+            "enable_ap eth0"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "! pidof -q hostapd && nmcli connection show --active | grep -q eth0"
+        },
+        {
+          "id": "N04",
+          "description": "Disable wifi access point",
+          "command": [
+            "disable_ap"
+          ],
+          "status": "Active",
+          "doc_link": "",
+          "src_reference": "",
+          "author": "",
+          "condition": "pidof -q hostapd"
+        },
+        {
+          "id": "N05",
           "description": "Install Bluetooth support",
           "command": [
             "see_current_apt ",
@@ -432,7 +468,7 @@
           "condition": "! check_if_installed bluetooth && ! check_if_installed bluez && ! check_if_installed bluez-tools"
         },
         {
-          "id": "N03",
+          "id": "N06",
           "description": "Remove Bluetooth support",
           "command": [
             "see_current_apt ",
@@ -447,7 +483,7 @@
           "condition": "check_if_installed bluetooth || check_if_installed bluez || check_if_installed bluez-tools"
         },
         {
-          "id": "N04",
+          "id": "N07",
           "description": "Bluetooth Discover",
           "prompt": "This will enable bluetooth and discover devices\n\nWould you like to continue?",
           "command": [
@@ -460,7 +496,7 @@
           "condition": "check_if_installed bluetooth || check_if_installed bluez || check_if_installed bluez-tools"
         },
         {
-          "id": "N05",
+          "id": "N08",
           "description": "Toggle system IPv6/IPv4 internet protocol",
           "prompt": "This will toggle your internet protocol\nWould you like to continue?",
           "command": [
