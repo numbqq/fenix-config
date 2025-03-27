@@ -379,8 +379,6 @@ function enable_ap() {
 		fi
 	done
 
-	sleep 2
-
 	ifconfig wlan1 $softap_ip netmask 255.255.255.0 up
 
 	cat > "$dnsmasq_config" <<-EOF
@@ -458,4 +456,6 @@ function disable_ap() {
 	done
 
 	echo 0 > /proc/sys/net/ipv4/ip_forward
+
+	sleep 2
 }
