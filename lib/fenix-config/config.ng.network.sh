@@ -381,42 +381,42 @@ function enable_ap() {
 
 	ifconfig wlan1 $softap_ip netmask 255.255.255.0 up
 
-	cat > "$dnsmasq_config" <<-EOF
-	user=root
-	listen-address=$softap_ip
-	$softap_ip_range
-	server=/google/8.8.8.8
-	port=53
+	cat > "$dnsmasq_config" <<- EOF
+		user=root
+		listen-address=$softap_ip
+		$softap_ip_range
+		server=/google/8.8.8.8
+		port=53
 	EOF
 
-	cat > "$hostapd_config" <<-EOF
-	interface=$ap_interface
-	ctrl_interface=/var/run/hostapd
-	driver=nl80211
-	ssid=$ssid
-	channel=6
-	hw_mode=g
-	ieee80211n=1
-	ignore_broadcast_ssid=0
+	cat > "$hostapd_config" <<- EOF
+		interface=$ap_interface
+		ctrl_interface=/var/run/hostapd
+		driver=nl80211
+		ssid=$ssid
+		channel=6
+		hw_mode=g
+		ieee80211n=1
+		ignore_broadcast_ssid=0
 	EOF
 
 	if [ ! -z $password ]; then
-		cat >> "$hostapd_config" <<-EOF
-		auth_algs=1
-		wpa=2
-		wpa_passphrase=$password
-		wpa_key_mgmt=WPA-PSK
-		wpa_pairwise=TKIP
-		rsn_pairwise=CCMP
+		cat >> "$hostapd_config" <<- EOF
+			auth_algs=1
+			wpa=2
+			wpa_passphrase=$password
+			wpa_key_mgmt=WPA-PSK
+			wpa_pairwise=TKIP
+			rsn_pairwise=CCMP
 		EOF
 	fi
 
 	[ -d $resolved_config_dir ] || mkdir $resolved_config_dir
 
-	cat > "$resolved_config_dir"/khadas_ap.conf <<-EOF
-	[Resolve]
-	DNS=127.0.0.1
-	DNSStubListener=no
+	cat > "$resolved_config_dir"/khadas_ap.conf <<- EOF
+		[Resolve]
+		DNS=127.0.0.1
+		DNSStubListener=no
 	EOF
 
 	systemctl reload-or-restart systemd-resolved
@@ -451,8 +451,8 @@ function disable_ap() {
 	systemctl reload-or-restart systemd-resolved
 
 	for interface in eth0 wlan0; do
-		iptables -D FORWARD -i wlan1 -o $interface -j ACCEPT 2>/dev/null
-		iptables -t nat -D POSTROUTING -o $interface -j MASQUERADE 2>/dev/null
+		iptables -D FORWARD -i wlan1 -o $interface -j ACCEPT 2> /dev/null
+		iptables -t nat -D POSTROUTING -o $interface -j MASQUERADE 2> /dev/null
 	done
 
 	echo 0 > /proc/sys/net/ipv4/ip_forward

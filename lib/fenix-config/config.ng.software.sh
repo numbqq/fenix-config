@@ -129,7 +129,7 @@ module_options+=(
 #
 # @decription remove docker
 #
-install_widevine(){
+install_widevine() {
 	local widevine_version="4.10.2662.3+1"
 	wget -P /tmp https://archive.raspberrypi.org/debian/pool/main/w/widevine/widevine_${widevine_version}.tar.xz
 	tar xf /tmp/widevine_${widevine_version}.tar.xz --strip-components=1 -C / --wildcards 'widevine-*/opt'
