@@ -338,13 +338,13 @@ function connect_bt_interface() {
 }
 
 module_options+=(
-	["see_ping,author"]="Gunjan Gupta"
-	["see_ping,ref_link"]=""
-	["see_ping,feature"]="access point"
-	["see_ping,desc"]="Enable access point backed by wifi or ethernet"
-	["see_ping,example"]="enable_ap [wlan0|eth0]"
-	["see_ping,doc_link"]=""
-	["see_ping,status"]="review"
+	["enable_ap,author"]="Gunjan Gupta"
+	["enable_ap,ref_link"]=""
+	["enable_ap,feature"]="access point"
+	["enable_ap,desc"]="Enable access point backed by wifi or ethernet"
+	["enable_ap,example"]="enable_ap [wlan0|eth0]"
+	["enable_ap,doc_link"]=""
+	["enable_ap,status"]="review"
 )
 #
 # Function to create access point
@@ -431,13 +431,13 @@ function enable_ap() {
 }
 
 module_options+=(
-	["see_ping,author"]="Gunjan Gupta"
-	["see_ping,ref_link"]=""
-	["see_ping,feature"]="access point"
-	["see_ping,desc"]="Disable access point"
-	["see_ping,example"]="disable_ap"
-	["see_ping,doc_link"]=""
-	["see_ping,status"]="review"
+	["disable_ap,author"]="Gunjan Gupta"
+	["disable_ap,ref_link"]=""
+	["disable_ap,feature"]="access point"
+	["disable_ap,desc"]="Disable access point"
+	["disable_ap,example"]="disable_ap"
+	["disable_ap,doc_link"]=""
+	["disable_ap,status"]="review"
 )
 #
 # Function to create access point

@@ -118,13 +118,13 @@ remove_docker() {
 }
 
 module_options+=(
-	["remove_docker,author"]="Gunjan Gupta"
-	["remove_docker,ref_link"]=""
-	["remove_docker,feature"]="widevine"
-	["remove_docker,desc"]="Install Widevine CDM"
-	["remove_docker,example"]="install_widevine"
-	["remove_docker,status"]="review"
-	["remove_docker,doc_link"]=""
+	["install_widevine,author"]="Gunjan Gupta"
+	["install_widevine,ref_link"]=""
+	["install_widevine,feature"]="widevine"
+	["install_widevine,desc"]="Install Widevine CDM"
+	["install_widevine,example"]="install_widevine"
+	["install_widevine,status"]="review"
+	["install_widevine,doc_link"]=""
 )
 #
 # @decription remove docker

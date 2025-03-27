@@ -1,6 +1,6 @@
 
 # Fenix Configuration Utility
-Updated: Wed Mar 19 16:00:56 UTC 2025
+Updated: Thu Mar 27 03:29:25 PM IST 2025
 
 Utility for configuring your board, adjusting services, and installing applications. It comes with Fenix by default.
 
@@ -26,10 +26,13 @@ sudo fenix-config
 
 - ## **Network** 
   - **N01** - Configure network interfaces
-  - **N02** - Install Bluetooth support
-  - **N03** - Remove Bluetooth support
-  - **N04** - Bluetooth Discover
-  - **N05** - Toggle system IPv6/IPv4 internet protocol
+  - **N02** - Create wifi access point (STA+AP)
+  - **N03** - Create wifi access point (ETH+AP)
+  - **N04** - Disable wifi access point
+  - **N05** - Install Bluetooth support
+  - **N06** - Remove Bluetooth support
+  - **N07** - Bluetooth Discover
+  - **N08** - Toggle system IPv6/IPv4 internet protocol
 
 
 - ## **Localisation** 
@@ -39,11 +42,11 @@ sudo fenix-config
 
 
 - ## **Software** 
-  - **SW01** - Desktop Environments
-  - **SW02** - Network tools
-  - **SW03** - Development tools
-  - **SW04** - Media Servers and Editors
-  - **SW05** - Remote Management tools
+  - **SW01** - Network tools
+  - **SW02** - Development tools
+  - **SW03** - Media Servers and Editors
+  - **SW04** - Remote Management tools
+  - **SW05** - Widevine CDM
   - **SW06** - Install system updates
 
 
@@ -96,48 +99,48 @@ Outputs:
 
   Network - Fixed and wireless network settings (wlan0)
     --cmd N01 - Configure network interfaces
-    --cmd N02 - Install Bluetooth support
-    --cmd N03 - Remove Bluetooth support
-    --cmd N04 - Bluetooth Discover
-    --cmd N05 - Toggle system IPv6/IPv4 internet protocol
+    --cmd N02 - Create wifi access point (STA+AP)
+    --cmd N03 - Create wifi access point (ETH+AP)
+    --cmd N04 - Disable wifi access point
+    --cmd N05 - Install Bluetooth support
+    --cmd N06 - Remove Bluetooth support
+    --cmd N07 - Bluetooth Discover
+    --cmd N08 - Toggle system IPv6/IPv4 internet protocol (IPV4)
 
-  Localisation - Localisation (C.UTF-8)
+  Localisation - Localisation (en_US.UTF-8)
     --cmd L01 - Change Global timezone
     --cmd L02 - Change Locales reconfigure the language and character set
     --cmd L03 - Change Keyboard layout
 
-  Software - Run/Install 3rd party applications (00:57:00)
-    SW01 - Desktop Environments
-	--cmd SW0101 - Install XFCE desktop
-	--cmd SW0102 - Install Gnome desktop
-	--cmd SW0103 - Install i3-wm desktop
-	--cmd SW0104 - Install Cinnamon desktop
-	--cmd SW0105 - Install kde-neon desktop
-    SW02 - Network tools
-	--cmd SW0201 - Install realtime console network usage monitor (nload)
-	--cmd SW0202 - Remove realtime console network usage monitor (nload)
-	--cmd SW0203 - Install bandwidth measuring tool (iperf3)
-	--cmd SW0204 - Remove bandwidth measuring tool (iperf3)
-	--cmd SW0205 - Install IP LAN monitor (iptraf-ng)
-	--cmd SW0206 - Remove IP LAN monitor (iptraf-ng)
-	--cmd SW0207 - Install hostname broadcast via mDNS (avahi-daemon)
-	--cmd SW0208 - Remove hostname broadcast via mDNS (avahi-daemon)
-    SW03 - Development tools
-	--cmd SW0301 - Install tools for cloning and managing repositories (git)
-	--cmd SW0302 - Remove tools for cloning and managing repositories (git)
-	--cmd SW0303 - Install Docker
-	--cmd SW0304 - Remove Docker
-	--cmd SW0305 - Purge all Docker images, containers, and volumes
-    SW04 - Media Servers and Editors
-	--cmd SW0401 - Install Plex Media server
-	--cmd SW0402 - Remove Plex Media server
-	--cmd SW0403 - Install Emby server
-	--cmd SW0404 - Remove Emby server
-    SW05 - Remote Management tools
-	--cmd SW0501 - Install Cockpit web-based management tool
-	--cmd SW0502 - Purge Cockpit web-based management tool
-	--cmd SW0503 - Start Cockpit Service
-	--cmd SW0504 - Stop Cockpit Service
+  Software - Run/Install 3rd party applications (00:43:37)
+    SW01 - Network tools
+	--cmd SW0101 - Install realtime console network usage monitor (nload)
+	--cmd SW0102 - Remove realtime console network usage monitor (nload)
+	--cmd SW0103 - Install bandwidth measuring tool (iperf3)
+	--cmd SW0104 - Remove bandwidth measuring tool (iperf3)
+	--cmd SW0105 - Install IP LAN monitor (iptraf-ng)
+	--cmd SW0106 - Remove IP LAN monitor (iptraf-ng)
+	--cmd SW0107 - Install hostname broadcast via mDNS (avahi-daemon)
+	--cmd SW0108 - Remove hostname broadcast via mDNS (avahi-daemon)
+    SW02 - Development tools
+	--cmd SW0201 - Install tools for cloning and managing repositories (git)
+	--cmd SW0202 - Remove tools for cloning and managing repositories (git)
+	--cmd SW0203 - Install Docker
+	--cmd SW0204 - Remove Docker
+	--cmd SW0205 - Purge all Docker images, containers, and volumes
+    SW03 - Media Servers and Editors
+	--cmd SW0301 - Install Plex Media server
+	--cmd SW0302 - Remove Plex Media server
+	--cmd SW0303 - Install Emby server
+	--cmd SW0304 - Remove Emby server
+    SW04 - Remote Management tools
+	--cmd SW0401 - Install Cockpit web-based management tool
+	--cmd SW0402 - Purge Cockpit web-based management tool
+	--cmd SW0403 - Start Cockpit Service
+	--cmd SW0404 - Stop Cockpit Service
+    SW05 - Widevine CDM
+	--cmd SW0501 - Install Widevine CDM
+	--cmd SW0502 - Remove Widevine CDM
     --cmd SW06 - Install system updates
   --cmd Help - About this app
 ~~~
@@ -285,6 +288,36 @@ nmtui-connect
 
 ### N02
 
+Create wifi access point (STA+AP)
+
+Jobs:
+
+~~~
+enable_ap wlan0
+~~~
+
+### N03
+
+Create wifi access point (ETH+AP)
+
+Jobs:
+
+~~~
+enable_ap eth0
+~~~
+
+### N04
+
+Disable wifi access point
+
+Jobs:
+
+~~~
+disable_ap
+~~~
+
+### N05
+
 Install Bluetooth support
 
 Jobs:
@@ -295,7 +328,7 @@ debconf-apt-progress -- apt-get -y install bluetooth bluez bluez-tools
 check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y --no-install-recommends install pulseaudio-module-bluetooth blueman
 ~~~
 
-### N03
+### N06
 
 Remove Bluetooth support
 
@@ -308,7 +341,7 @@ check_if_installed xserver-xorg && debconf-apt-progress -- apt-get -y remove pul
 debconf-apt-progress -- apt -y -qq autoremove
 ~~~
 
-### N04
+### N07
 
 Bluetooth Discover
 
@@ -318,7 +351,7 @@ Jobs:
 connect_bt_interface
 ~~~
 
-### N05
+### N08
 
 Toggle system IPv6/IPv4 internet protocol
 
@@ -363,7 +396,7 @@ update-initramfs -u
 
 ### SW01
 
-Desktop Environments
+Network tools
 
 Jobs:
 
@@ -373,7 +406,7 @@ No commands available
 
 ### SW02
 
-Network tools
+Development tools
 
 Jobs:
 
@@ -383,7 +416,7 @@ No commands available
 
 ### SW03
 
-Development tools
+Media Servers and Editors
 
 Jobs:
 
@@ -393,7 +426,7 @@ No commands available
 
 ### SW04
 
-Media Servers and Editors
+Remote Management tools
 
 Jobs:
 
@@ -403,7 +436,7 @@ No commands available
 
 ### SW05
 
-Remote Management tools
+Widevine CDM
 
 Jobs:
 
@@ -449,7 +482,9 @@ These helper functions facilitate various operations related to job management, 
 | Display a menu a given list of options with a provided prompt | generic_select "true false" "Select an option" | Gunjan Gupta 
 | Migrated procedures from Armbian config. | connect_bt_interface | Igor Pecovnik 
 | Display a message box | show_message <<< 'hello world'  | Joey Turner 
+| Install Widevine CDM | install_widevine | Gunjan Gupta 
 | Menu for armbianmonitor features | see_monitoring | Joey Turner 
+| Enable access point backed by wifi or ethernet | enable_ap [wlan0|eth0] | Gunjan Gupta 
 | Enable/disable device tree overlays | manage_dtoverlays | Gunjan Gupta 
 | Show or generate QR code for Google OTP | qr_code generate | Igor Pecovnik 
 | Check if kernel headers are installed | are_headers_installed | Gunjan Gupta 
@@ -461,11 +496,11 @@ These helper functions facilitate various operations related to job management, 
 | Check if a domain is reachable via IPv4 and IPv6 | check_ip_version google.com | Joey Turner 
 | Generate a submenu from a parent_id | generate_menu 'parent_id' | Joey Turner 
 | Install docker | install_docker | Gunjan Gupta 
+| Disable access point | disable_ap | Gunjan Gupta 
 | Generate a markdown list json objects using jq. | see_jq_menu_list | Joey Turner 
 | Generate jobs from JSON file. | generate_jobs_from_json | Joey Turner 
 | Toggle IPv6 on or off | toggle_ipv6 | Joey Turner 
 | Generate JSON-like object file. | generate_json | Joey Turner 
-| Install DE | install_de | Igor Pecovnik 
 | Install wrapper | apt_install_wrapper apt-get -y purge armbian-zsh | igorpecovnik 
 | Netplan wrapper | network_config | Igor Pecovnik 
 | Change the background color of the terminal or dialog box | set_colors 0-7 | Joey Turner 
