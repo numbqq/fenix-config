@@ -702,7 +702,7 @@
               "condition": "check_if_installed git"
             },
             {
-              "id": "SW0303",
+              "id": "SW0203",
               "description": "Install Docker",
               "command": [
                 "install_docker"

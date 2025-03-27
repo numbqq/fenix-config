@@ -366,7 +366,7 @@ function enable_ap() {
 		if ! ssid=$($DIALOG --title "$TITLE" --inputbox "Please enter SSID" 7 50 3>&1 1>&2 2>&3); then
 			return 0
 		elif [ -z "$ssid" ]; then
-			$DIALOG --msgbox "SSID cannot be empty. Please try again." 7 50
+			$DIALOG --title "$TITLE" --msgbox "SSID cannot be empty. Please try again." 7 50
 		fi
 	done
 
